@@ -1,2 +1,1 @@
-# SST-tool
-Library and tools for working with Empire Earth SST texture files
+# Empire Earth tools for the SST image format
