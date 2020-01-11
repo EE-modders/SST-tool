@@ -16,6 +16,9 @@ importlib.reload(lib)
 
 version = "0.5 beta"
 
+magic_number_compressed = b'PK01' # this is the magic number for all compressed files
+confirm = True
+
 print("### SST Converter for Empire Earth made by zocker_160")
 print("### version %s" % version)
 print("###")
@@ -24,11 +27,14 @@ print("### https://github.com/EE-modders/SST-tool/issues")
 print("###")
 print("###----------------------------------------------\n")
 
-if len(sys.argv) <= 1:
-    print("USAGE: SSTtool <inputfile1> <inputfile2> <inputfile3> ... <inputfileN>")
-    # TODO: implement "-h", "--silent" (for no promt / bash convert), "--info" (show header information only)
+def show_help():
+    print("USAGE: SSTtool [options] <inputfile1> <inputfile2> ... <inputfileN>")
+    # TODO: "--info" (show header information only)
     print("important: if you want to convert multiple TGAs you can also just drag and drop them all at once onto the executable")
     print()
+    print("possible options:")
+    print("-h, --help\tshow this help")
+    print("-nc\t\t\"no confirm\" disables all confirmation questions\n\t\tuseful for batch conversion")
     input("press Enter to close.......")
     sys.exit()
 
@@ -73,9 +79,12 @@ if filename.split('.')[-1] == "sst":
         #print("number of different resolutions: %d" % SST.header["resolutions"])
         #print("number of different image tiles: %d" % SST.header["tiles"])
         print("total number of tiles: %d" % tiles_mult)
-        response = input("continue? (y/n) ")
-        if response != "y":        
-            input("\nEXIT - press Enter.......\n")            
+        if confirm:
+            response = input("continue? (y/n) ")
+        else:
+            response = "y"
+        if response != "y":
+            input("\nEXIT - press Enter.......\n")
             sys.exit()
         
         global TGA_images
@@ -118,7 +127,10 @@ elif filename.split('.')[-1] == "tga":
         for i in range(num_images):
             print("%d: %s" % (i+1, filenames[i]))
         print()
-        response = input("is that correct? (y/n) ")
+        if confirm:
+            response = input("is that correct? (y/n) ")
+        else:
+            response = "y"
         if response != "y":
             input("\nEXIT - press Enter.......\n")            
             sys.exit()
@@ -176,4 +188,4 @@ else:
 
 print("done!")
 
-input("press Enter to close.......")
+if confirm: input("press Enter to close.......")
