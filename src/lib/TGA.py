@@ -36,7 +36,7 @@ class TGA:
         for _ in range(number_of_tiles-1):
             next_header = tga_blob.read(-1).find(self.TGAheader)
             if next_header == -1:
-                print("Critical Error: Number of tiles does not match the one specified in the SST file!")
+                input("Critical Error: Number of tiles does not match the one specified in the SST file!\n")
                 sys.exit()
             header.append(next_header)
             tga_blob.seek(next_header+self.tga_header_length)
