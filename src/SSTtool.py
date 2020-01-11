@@ -127,6 +127,7 @@ elif filename.split('.')[-1] == "tga":
         for j in range(num_images):
             with open(filenames[j], 'rb') as tgafile:
                 tga_bin += tgafile.read()
+                tga_bin += b'\x00'
 
         print("creating SST file........")
         orgTGA = TGA(tga_binary=tga_bin)
