@@ -13,7 +13,12 @@ class TGA:
         self.tga_bin = tga_binary
         self.tga_header_length = 18
         self.TGAheader = self.get_header()
-        self.xRes, self.yRes, self.BitDepth = self.get_TGA_info(self.tga_bin)
+        self.xRes, self.yRes, self.BitDepth, self.Type = self.get_TGA_info(self.TGAheader)
+
+        if self.Type != 2:
+            input("ERROR: This type (%d) of TGA is not supported: pls deactivate RLE compression\n" % self.Type)
+            sys.exit()
+        self.tga_bin = self.cleanup()
 
     def get_header(self):
         tga = BytesIO(self.tga_bin)    
@@ -104,13 +109,13 @@ class TGA:
         return int(length)
 
     def get_TGA_info(self, tga_blob):
-        """Retuns xRes, yRes and BitDepth of the TGA file"""
+        """Retuns Type, xRes, yRes and BitDepth of the TGA file"""
         handle = BytesIO(tga_blob)
         read_int_buff = lambda x: int.from_bytes(header.read(x), byteorder='little', signed=False)
 
         header = handle.read(self.tga_header_length)
         if header == b'':
-            return 0, 0        
+            return 0,0,0,0
 
         header = BytesIO(header)
         header.seek(12)
@@ -118,7 +123,7 @@ class TGA:
         yRes = read_int_buff(2)
         Bit = read_int_buff(1)
 
-        return xRes, yRes, Bit
+        return xRes, yRes, Bit, tgaType
 
     def write_TGA(self, tga_binary, filename: str):
         with open(filename, 'wb') as tgafile:
