@@ -132,7 +132,7 @@ elif filename.split('.')[-1] == "tga":
         print("creating SST file........")
         orgTGA = TGA(tga_binary=tga_bin)
         newSST = SST(1, num_tiles=num_images, x_res=orgTGA.xRes, y_res=orgTGA.yRes, TGAbody=orgTGA.tga_bin)
-        newSST.write_to_file(filename.split('.')[0] + "_TEST.sst")
+        newSST.write_to_file(filename.split('.')[0] + "_NEW.sst")
 
     #response = input("how many tiles / images will the SST texture contain? ")
     #tga_bin = b''
