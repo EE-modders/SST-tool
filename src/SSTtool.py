@@ -14,7 +14,7 @@ from lib.TGA import TGA
 
 importlib.reload(lib)
 
-version = "0.4 beta"
+version = "0.5 beta"
 
 print("### SST Converter for Empire Earth made by zocker_160")
 print("### version %s" % version)
