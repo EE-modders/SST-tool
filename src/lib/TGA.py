@@ -94,7 +94,7 @@ class TGA:
             if TGAHeader == b'':
                 break
             tmp_blob += TGAHeader
-            TGAbody = tga_blob.read(self.get_TGA_body_length(TGAHeader))
+            TGAbody = tga_blob.read(self.get_TGA_body_length(TGAHeader) + 1)
             tmp_blob += TGAbody
 
             TGA_images.append(tmp_blob)
@@ -103,9 +103,12 @@ class TGA:
 
     def get_TGA_body_length(self, tga_header_blob):
         """Calculates the length of the TGA binary data with the information in the TGA header"""
-        X, Y, BIT = self.get_TGA_info(tga_header_blob)
-        length = (X * Y * BIT) / 8 + 1
-        #print(int(length))
+        X, Y, BIT, Type = self.get_TGA_info(tga_header_blob)
+        return self.calc_TGA_body_length(X, Y, BIT)
+
+    def calc_TGA_body_length(self, X, Y, BIT):
+        length = (X * Y * BIT) / 8
+        print("(%d, %d, %d, %d)" % (X, Y, BIT, int(length)))
         return int(length)
 
     def get_TGA_info(self, tga_blob):
@@ -118,12 +121,21 @@ class TGA:
             return 0,0,0,0
 
         header = BytesIO(header)
+
+        header.seek(2)
+        tgaType = read_int_buff(1)
         header.seek(12)
         xRes = read_int_buff(2)
         yRes = read_int_buff(2)
         Bit = read_int_buff(1)
 
         return xRes, yRes, Bit, tgaType
+
+    def cleanup(self):
+        tga_old = BytesIO(self.tga_bin)
+        length = self.tga_header_length + self.calc_TGA_body_length(self.xRes, self.yRes, self.BitDepth)
+        tga = tga_old.read(length)
+        return tga
 
     def write_TGA(self, tga_binary, filename: str):
         with open(filename, 'wb') as tgafile:
