@@ -38,20 +38,41 @@ def show_help():
     input("press Enter to close.......")
     sys.exit()
 
-magic_number_compressed = b'PK01' # this is the magic number for all compressed files
-filename = sys.argv[1]
+def show_exit():
+    input("\npress Enter to close.......\n")
+    sys.exit()
 
-with open(filename, 'rb') as sstfile:
-    global TGAbody
-    
-    print("analysing %s......" % filename)
-    if sstfile.read(4) == magic_number_compressed:
-        print()
-        print("you need to decompress the file first!")
-        print()
+if len(sys.argv) <= 1:
+    show_help()
 
-        input("press Enter to close.......")
-        sys.exit()
+for i, arg in enumerate(sys.argv):
+    if arg == "-nc":
+        confirm = False
+        sys.argv.pop(i)
+    if arg == "-h" or arg == "--help":
+        show_help()
+
+try:
+    filename = sys.argv[1]
+except IndexError:
+    print("ERROR: no file(s) specified!")
+    show_exit()
+
+try:
+    with open(filename, 'rb') as sstfile:
+        global TGAbody
+        
+        print("analysing %s......" % filename)
+        if sstfile.read(4) == magic_number_compressed:
+            print()
+            print("you need to decompress the file first!")
+            print()
+
+            if confirm: input("press Enter to close.......")
+            sys.exit()
+except EnvironmentError:
+    print("File \"%s\" not found!" % filename)
+    show_exit()
 
 # check if input was TGA or SST file
 if filename.split('.')[-1] == "sst":
