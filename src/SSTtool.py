@@ -64,12 +64,8 @@ try:
         
         print("analysing %s......" % filename)
         if sstfile.read(4) == magic_number_compressed:
-            print()
-            print("you need to decompress the file first!")
-            print()
-
-            if confirm: input("press Enter to close.......")
-            sys.exit()
+            print("\nyou need to decompress the file first!\n")
+            show_exit()
 except EnvironmentError:
     print("File \"%s\" not found!" % filename)
     show_exit()
@@ -104,9 +100,7 @@ if filename.split('.')[-1] == "sst":
             response = input("continue? (y/n) ")
         else:
             response = "y"
-        if response != "y":
-            input("\nEXIT - press Enter.......\n")
-            sys.exit()
+        if response != "y": show_exit()
         
         global TGA_images
         TGA_images = TGA.get_TGA_parts_3()
@@ -152,9 +146,7 @@ elif filename.split('.')[-1] == "tga":
             response = input("is that correct? (y/n) ")
         else:
             response = "y"
-        if response != "y":
-            input("\nEXIT - press Enter.......\n")            
-            sys.exit()
+        if response != "y": show_exit()
 
         print("bundling TGA images........")
 
@@ -203,9 +195,7 @@ elif filename.split('.')[-1] == "tga":
 
 else:
     print("ERROR: unknown file format! Only TGA and SST are supported \n")
-    input("press Enter to close.......")
-
-
+    show_exit()
 
 print("done!")
 
