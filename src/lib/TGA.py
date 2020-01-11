@@ -132,6 +132,7 @@ class TGA:
         return xRes, yRes, Bit, tgaType
 
     def cleanup(self):
+        """This function removes all metadata etc by removing everything after the length specified by the TGA header"""
         tga_old = BytesIO(self.tga_bin)
         length = self.tga_header_length + self.calc_TGA_body_length(self.xRes, self.yRes, self.BitDepth)
         tga = tga_old.read(length)
