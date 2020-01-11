@@ -18,7 +18,6 @@ class TGA:
         if self.Type != 2:
             input("ERROR: This type (%d) of TGA is not supported: pls deactivate RLE compression\n" % self.Type)
             sys.exit()
-        self.tga_bin = self.cleanup()
 
     def get_header(self):
         tga = BytesIO(self.tga_bin)    
@@ -135,8 +134,8 @@ class TGA:
         """This function removes all metadata etc by removing everything after the length specified by the TGA header"""
         tga_old = BytesIO(self.tga_bin)
         length = self.tga_header_length + self.calc_TGA_body_length(self.xRes, self.yRes, self.BitDepth)
-        tga = tga_old.read(length)
-        return tga
+
+        self.tga_bin = tga_old.read(length)
 
     def write_TGA(self, tga_binary, filename: str):
         with open(filename, 'wb') as tgafile:

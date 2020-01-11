@@ -104,6 +104,7 @@ elif filename.split('.')[-1] == "tga":
             tga_bin = tgafile.read()
 
         orgTGA = TGA(tga_binary=tga_bin)
+        orgTGA.cleanup()
         newSST = SST(1, num_tiles=1, x_res=orgTGA.xRes, y_res=orgTGA.yRes, TGAbody=orgTGA.tga_bin)
         newSST.write_to_file(filename.split('.')[0] + "_NEW.sst")
     else:        
@@ -126,7 +127,9 @@ elif filename.split('.')[-1] == "tga":
 
         for j in range(num_images):
             with open(filenames[j], 'rb') as tgafile:
-                tga_bin += tgafile.read()
+                tmpTGA = TGA(tgafile.read())
+                tmpTGA.cleanup()
+                tga_bin += tmpTGA.tga_bin
                 tga_bin += b'\x00'
 
         print("creating SST file........")
