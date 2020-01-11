@@ -12,7 +12,7 @@ class TGA:
     def __init__(self, tga_binary = b''):
         self.tga_bin = tga_binary
         self.tga_header_length = 18
-        self.TGAheader = self.get_header
+        self.TGAheader = self.get_header()
         self.xRes, self.yRes, self.BitDepth = self.get_TGA_info(self.tga_bin)
 
     def get_header(self):
