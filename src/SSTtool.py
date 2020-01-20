@@ -14,10 +14,11 @@ from lib.TGA import TGA
 
 importlib.reload(lib)
 
-version = "0.6 beta"
+version = "0.7 beta"
 
 magic_number_compressed = b'PK01' # this is the magic number for all compressed files
 confirm = True
+short_output = False
 
 print("### SST Converter for Empire Earth made by zocker_160")
 print("### version %s" % version)
@@ -35,6 +36,7 @@ def show_help():
     print("possible options:")
     print("-h, --help\tshow this help")
     print("-nc\t\t\"no confirm\" disables all confirmation questions\n\t\tuseful for batch conversion")
+    print("-so\t\t\"short output\" doesn't add \"_NEW_\" to the output SST file")
     input("press Enter to close.......")
     sys.exit()
 
@@ -45,12 +47,22 @@ def show_exit():
 if len(sys.argv) <= 1:
     show_help()
 
+parameter_list = list()
+
 for i, arg in enumerate(sys.argv):
-    if arg == "-nc":
-        confirm = False
-        sys.argv.pop(i)
     if arg == "-h" or arg == "--help":
         show_help()
+    if arg == "-nc":
+        confirm = False
+        parameter_list.append(i)        
+    if arg == "-so":
+        short_output = True
+        parameter_list.append(i)        
+
+# remove commandline parameters
+parameter_list.sort(reverse=True)
+for param in parameter_list:
+    sys.argv.pop(param)
 
 try:
     filename = sys.argv[1]
@@ -130,7 +142,10 @@ elif filename.split('.')[-1] == "tga":
         orgTGA = TGA(tga_binary=tga_bin)
         orgTGA.cleanup()
         newSST = SST(1, num_tiles=1, x_res=orgTGA.xRes, y_res=orgTGA.yRes, TGAbody=orgTGA.tga_bin)
-        newSST.write_to_file(filename.split('.')[0] + "_NEW.sst")
+        if short_output:
+            newSST.write_to_file(filename.split('.')[0] + ".sst")
+        else:
+            newSST.write_to_file(filename.split('.')[0] + "_NEW.sst")
     else:        
         filenames = sys.argv
         filenames.pop(0)
@@ -160,7 +175,11 @@ elif filename.split('.')[-1] == "tga":
         print("creating SST file........")
         orgTGA = TGA(tga_binary=tga_bin)
         newSST = SST(1, num_tiles=num_images, x_res=orgTGA.xRes, y_res=orgTGA.yRes, TGAbody=orgTGA.tga_bin)
-        newSST.write_to_file(filename.split('.')[0] + "_NEW.sst")
+        if short_output:
+            newSST.write_to_file(filename.split('.')[0] + ".sst")
+        else:
+            newSST.write_to_file(filename.split('.')[0] + "_NEW.sst")
+
 
     #response = input("how many tiles / images will the SST texture contain? ")
     #tga_bin = b''
