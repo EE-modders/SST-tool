@@ -35,7 +35,6 @@ def show_help():
     print("possible options:")
     print("-h, --help\tshow this help")
     print("-nc\t\t\"no confirm\" disables all confirmation questions\n\t\tuseful for batch conversion")
-    input("press Enter to close.......")
     sys.exit()
 
 def show_exit():
