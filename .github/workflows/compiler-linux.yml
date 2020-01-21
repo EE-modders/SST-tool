@@ -1,0 +1,40 @@
+name: Python compiler linux
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python 3.x
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.x
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install Pillow
+        pip install pyinstaller
+    - name: python version
+      run: python --version
+    - name: pyinstaller version
+      run: pyinstaller --version
+    
+    
+    - name: run SSTtool directly
+      run: python ./src/SSTtool.py
+    
+    - name: compile SSTtool
+      run: pyinstaller -F ./src/SSTtool.py
+      
+    - name: run compiled version
+      run: ./dist/SSTtool
+
+    - name: save compiled SSTtool
+      uses: actions/upload-artifact@master
+      with:
+        name: SSTtool_linux
+        path: ./dist/SSTtool
