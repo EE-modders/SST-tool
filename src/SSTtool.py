@@ -37,7 +37,6 @@ def show_help():
     print("-h, --help\tshow this help")
     print("-nc\t\t\"no confirm\" disables all confirmation questions\n\t\tuseful for batch conversion")
     print("-so\t\t\"short output\" doesn't add \"_NEW_\" to the output SST file")
-    input("press Enter to close.......")
     sys.exit()
 
 def show_exit():
