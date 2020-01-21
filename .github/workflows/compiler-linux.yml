@@ -1,11 +1,11 @@
-name: Python compiler windows
+name: Python compiler linux
 
 on: [push]
 
 jobs:
   build:
 
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v1
@@ -23,17 +23,28 @@ jobs:
     - name: pyinstaller version
       run: pyinstaller --version
     
-    - name: run program directly
-      run: python .\src\SSTtool.py
     
-    - name: compile linux version
-      run: pyinstaller -F .\src\SSTtool.py
+    - name: run SSTtool directly
+      run: python ./src/SSTtool.py
+    
+    - name: compile SSTtool
+      run: pyinstaller -F ./src/SSTtool.py
       
     - name: run compiled version
-      run: .\dist\SSTtool.exe
+      run: ./dist/SSTtool
 
-    - name: save compiled version
+    - name: save compiled SSTtool
       uses: actions/upload-artifact@master
       with:
-        name: SSTtool_exe
-        path: .\dist\SSTtool.exe
+        name: SSTtool_linux
+        path: ./dist/SSTtool
+    
+    
+    - name: compile SSTviewer
+      run: pyinstaller -F ./src/SSTviewer.py
+
+    - name: save compiled SSTviewer
+      uses: actions/upload-artifact@master
+      with:
+        name: SSTviewer_linux
+        path: ./dist/SSTviewer
