@@ -25,13 +25,13 @@ jobs:
     
 
     - name: run SSTtool directly
-      run: python .\src\SSTtool.py
+      run: python .\src\SSTtool.py -v
     
     - name: compile SSTtool
       run: pyinstaller -F .\src\SSTtool.py
       
     - name: run compiled version
-      run: .\dist\SSTtool.exe
+      run: .\dist\SSTtool.exe -v
     
 
     - name: compile SSTviewer

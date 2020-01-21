@@ -34,9 +34,10 @@ def show_help():
     print("important: if you want to convert multiple TGAs you can also just drag and drop them all at once onto the executable")
     print()
     print("possible options:")
-    print("-h, --help\tshow this help")
+    print("-h, --help, -v\tshow this help / version information")
     print("-nc\t\t\"no confirm\" disables all confirmation questions\n\t\tuseful for batch conversion")
     print("-so\t\t\"short output\" doesn't add \"_NEW_\" to the output SST file")
+    if confirm: input("press Enter to close........")
     sys.exit()
 
 def show_exit():
@@ -49,7 +50,8 @@ if len(sys.argv) <= 1:
 parameter_list = list()
 
 for i, arg in enumerate(sys.argv):
-    if arg == "-h" or arg == "--help":
+    if arg == "-h" or arg == "--help" or arg == "-v":
+        confirm = False
         show_help()
     if arg == "-nc":
         confirm = False
