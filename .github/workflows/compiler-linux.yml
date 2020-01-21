@@ -38,13 +38,3 @@ jobs:
       with:
         name: SSTtool_linux
         path: ./dist/SSTtool
-    
-    
-    - name: compile SSTviewer
-      run: pyinstaller -F ./src/SSTviewer.py
-
-    - name: save compiled SSTviewer
-      uses: actions/upload-artifact@master
-      with:
-        name: SSTviewer_linux
-        path: ./dist/SSTviewer

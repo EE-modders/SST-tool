@@ -23,7 +23,8 @@ jobs:
     - name: pyinstaller version
       run: pyinstaller --version
     
-    - name: run program directly
+
+    - name: run SSTtool directly
       run: python .\src\SSTtool.py
     
     - name: compile SSTtool
@@ -31,19 +32,13 @@ jobs:
       
     - name: run compiled version
       run: .\dist\SSTtool.exe
+    
 
-    - name: save compiled SSTtool
-      uses: actions/upload-artifact@master
-      with:
-        name: SSTtool_exe
-        path: .\dist\SSTtool.exe
-    
-    
     - name: compile SSTviewer
       run: pyinstaller -F --noconsole .\src\SSTviewer.py
 
-    - name: save compiled SSTviewer
+    - name: save compiled files
       uses: actions/upload-artifact@master
       with:
-        name: SSTviewer_windows
-        path: .\dist\SSTviewer
+        name: SSTtools_windows
+        path: .\dist
