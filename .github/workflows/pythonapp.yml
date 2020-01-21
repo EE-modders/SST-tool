@@ -18,21 +18,22 @@ jobs:
         python -m pip install --upgrade pip
         pip install Pillow
         pip install pyinstaller
-    - name: show versions
-      run: |
-        python --version
-        pyinstaller --version
+    - name: python version
+      run: python --version
+    - name: pyinstaller version
+      run: pyinstaller --version
+    
     - name: run program directly
-      run: python SSTtool.py
+      run: python ./src/SSTtool.py
     
     - name: compile linux version
-      run: pyinstaller -F SSTtool.py
+      run: pyinstaller -F ./src/SSTtool.py
       
     - name: run compiled version
-      run: ./build/SSTtool
+      run: ./src/build/SSTtool
 
     - name: save compiled version
       uses: actions/upload-artifact@master
       with:
         name: SSTtool_bin
-        path: ./build/SSTtool
+        path: ./src/build/SSTtool
