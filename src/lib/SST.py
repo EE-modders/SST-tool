@@ -10,8 +10,6 @@ This is the main lib for SST files from Empire Earth
 
 class SST:
     def __init__(self, num_res=0, num_tiles=0, x_res=0, y_res=0, TGAbody=b''):
-        # self.header = dict()
-
         self.header = {
             "first": b'\x00',
             "resolutions": num_res,

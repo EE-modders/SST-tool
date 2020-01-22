@@ -181,38 +181,6 @@ elif filename.split('.')[-1] == "tga":
         else:
             newSST.write_to_file(filename.split('.')[0] + "_NEW.sst")
 
-
-    #response = input("how many tiles / images will the SST texture contain? ")
-    #tga_bin = b''
-    #try:
-    #    response = int(response)
-    #except ValueError:
-    #    print("ERROR: invalid value!")
-    #    sys.exit()
-    #
-    #if response == 1:
-    #    print("creating SST........")
-    #    with open(filename, 'rb') as tgafile:
-    #        tga_bin = tgafile.read()
-    #    
-    #    orgTGA = TGA(tga_binary=tga_bin)
-    #    newSST = SST(1, num_tiles=1, x_res=orgTGA.xRes, y_res=orgTGA.yRes, TGAbody=orgTGA.tga_bin)
-    #    newSST.write_to_file(filename.split('.')[0] + "_TEST.sst")
-    #elif response > 1:
-    #    print("enter multi image mode.........")        
-    #    with open(filename, 'rb') as tgafile:
-    #        tga_bin = tgafile.read()
-    #    
-    #    for i in range(response-1):
-    #        newfilename = input("Please input TGA image (%d/%d) " % (i+2, response))
-    #        with open(newfilename, 'rb') as tgafile:
-    #            tga_bin += tgafile.read()
-    #
-    #    print("bundling TGA images........")
-    #    orgTGA = TGA(tga_binary=tga_bin)
-    #    newSST = SST(1, num_tiles=response, x_res=orgTGA.xRes, y_res=orgTGA.yRes, TGAbody=orgTGA.tga_bin)
-    #    newSST.write_to_file(filename.split('.')[0] + "_TEST.sst")
-
 else:
     print("ERROR: unknown file format! Only TGA and SST are supported \n")
     show_exit()
