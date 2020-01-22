@@ -22,6 +22,7 @@ class SST:
         self.TGAbody = TGAbody
 
     def read_from_file(self, filename: str):
+        """reads an SST input file and parses the SST-header and body"""
         with open(filename, 'rb') as sstfile:
 
             read_int_buff = lambda x: int.from_bytes(sstfile.read(x), byteorder="little", signed=False)
@@ -39,6 +40,7 @@ class SST:
             self.TGAbody = sstfile.read(-1)
 
     def write_to_file(self, filename: str):
+        """writes SST header and body to a file using the information of the SST object"""
         outputfile = filename
 
         with open(outputfile, 'wb') as sstfile:
@@ -48,6 +50,7 @@ class SST:
 
 
     def get_header_bytes(self):
+        """returns the SST header in byte format"""
         result = b''
         #print(self.header)
         result += self.header["first"]

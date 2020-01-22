@@ -83,7 +83,7 @@ except EnvironmentError:
     print("File \"%s\" not found!" % filename)
     show_exit()
 
-# check if input was TGA or SST file
+# check if input file was TGA or SST file
 if filename.split('.')[-1] == "sst":
     print("found SST file - will convert to TGA.....")
 
