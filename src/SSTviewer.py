@@ -62,8 +62,8 @@ else:
 
     # Image load
     render = list()
-    for i in range(len(TGA_Images)):
-        load = Image.open(BytesIO(TGA_Images[i]))
+    for i, tgaimage in enumerate(TGA_Images):
+        load = Image.open(BytesIO(tgaimage[i]))
         load = load.resize((width, height))
         render.append(ImageTk.PhotoImage(load))
 
