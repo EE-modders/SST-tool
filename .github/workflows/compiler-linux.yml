@@ -33,6 +33,9 @@ jobs:
     - name: run compiled version
       run: ./dist/SSTtool -v
 
+    - name: compile SSTviewer
+      run: pyinstaller -F --noconsole ./src/SSTviewer.py
+
     - name: save compiled SSTtool
       uses: actions/upload-artifact@master
       with:
