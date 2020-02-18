@@ -40,4 +40,4 @@ jobs:
       uses: actions/upload-artifact@master
       with:
         name: SSTtool_linux
-        path: ./dist/SSTtool
+        path: ./dist
