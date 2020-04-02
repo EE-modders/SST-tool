@@ -73,8 +73,6 @@ except IndexError:
 
 try:
     with open(filename, 'rb') as sstfile:
-        global TGAbody
-        
         print("analysing %s......" % filename)
         if sstfile.read(4) == magic_number_compressed:
             print("\nyou need to decompress the file first!\n")
