@@ -39,9 +39,10 @@ class SST:
 
             self.TGAbody = sstfile.read(-1)
 
-    def write_to_file(self, filename: str):
-        """writes SST header and body to a file using the information of the SST object"""
-        outputfile = filename + ".sst"
+    def write_to_file(self, filename: str, add_extention=True):
+        """writes SST header and body to a file using the information of the SST object"""    
+        outputfile = filename
+        if add_extention: outputfile += '.sst'
 
         with open(outputfile, 'wb') as sstfile:
             print("writing %s.......\n" % outputfile)
