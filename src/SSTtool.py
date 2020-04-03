@@ -142,9 +142,9 @@ elif filename.split('.')[-1] == "tga":
         orgTGA.cleanup()
         newSST = SST(1, num_tiles=1, x_res=orgTGA.xRes, y_res=orgTGA.yRes, TGAbody=orgTGA.tga_bin)
         if short_output:
-            newSST.write_to_file(filename.split('.')[0] + ".sst")
+            newSST.write_to_file(filename.split('.')[0])
         else:
-            newSST.write_to_file(filename.split('.')[0] + "_NEW.sst")
+            newSST.write_to_file(filename.split('.')[0] + "_NEW")
     else:        
         filenames = sys.argv
         filenames.pop(0)
@@ -175,9 +175,9 @@ elif filename.split('.')[-1] == "tga":
         orgTGA = TGA(tga_binary=tga_bin)
         newSST = SST(1, num_tiles=num_images, x_res=orgTGA.xRes, y_res=orgTGA.yRes, TGAbody=orgTGA.tga_bin)
         if short_output:
-            newSST.write_to_file(filename.split('.')[0] + ".sst")
+            newSST.write_to_file(filename.split('.')[0])
         else:
-            newSST.write_to_file(filename.split('.')[0] + "_NEW.sst")
+            newSST.write_to_file(filename.split('.')[0] + "_NEW")
 
 else:
     print("ERROR: unknown file format! Only TGA and SST are supported \n")

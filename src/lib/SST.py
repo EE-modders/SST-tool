@@ -41,7 +41,7 @@ class SST:
 
     def write_to_file(self, filename: str):
         """writes SST header and body to a file using the information of the SST object"""
-        outputfile = filename
+        outputfile = filename + ".sst"
 
         with open(outputfile, 'wb') as sstfile:
             print("writing %s.......\n" % outputfile)
