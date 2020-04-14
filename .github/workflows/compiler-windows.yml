@@ -17,9 +17,12 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install Pillow
+        pip install pyinstaller
         pip install nuitka
     - name: python version
       run: python --version
+    - name: pyinstaller version
+      run: pyinstaller --version      
     - name: nuitka version
       run: nuitka3 --version
     
@@ -36,7 +39,13 @@ jobs:
     - name: compile SSTviewer
       run: nuitka3 --standalone .\src\SSTviewer.py
 
-    - name: save compiled files
+    - name: save SSTtool
+      uses: actions/upload-artifact@master
+      with:
+        name: SSTtool_windows
+        path: .\dist
+      
+    - name: save SSTviewer
       uses: actions/upload-artifact@master
       with:
         name: SSTviewer_windows
