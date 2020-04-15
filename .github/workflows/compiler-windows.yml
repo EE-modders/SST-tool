@@ -54,5 +54,5 @@ jobs:
     - name: save SSTviewer standalone
       uses: actions/upload-artifact@master
       with:
-        name: SSTviewer_windows
+        name: SSTviewer_windows_standalone
         path: .\dist\SSTviewer.exe 
