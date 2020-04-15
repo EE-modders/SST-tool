@@ -14,7 +14,7 @@ from lib.TGA import TGA
 
 importlib.reload(lib)
 
-version = "0.7 beta"
+version = "0.8"
 
 magic_number_compressed = b'PK01' # this is the magic number for all compressed files
 confirm = True
