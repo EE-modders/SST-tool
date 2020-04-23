@@ -29,9 +29,10 @@ print("###")
 print("###----------------------------------------------\n")
 
 def show_help():
-    print("USAGE: SSTtool [options] <inputfile1> <inputfile2> ... <inputfileN>")
     # TODO: "--info" (show header information only)
-    print("important: if you want to convert multiple TGAs you can also just drag and drop them all at once onto the executable")
+    print("USAGE: SSTtool [options] <inputfile1> <inputfile2> ... <inputfileN>")
+    print("or you can just DRAG & DROP the image file onto the executable")
+    print("important: if you want to convert multiple TGAs into one SST, you can drop multiple files at once onto the executable")
     print()
     print("possible options:")
     print("-h, --help, -v\tshow this help / version information")

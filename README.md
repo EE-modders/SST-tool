@@ -1,14 +1,18 @@
 # Empire Earth tools for the SST image format
 
 #### what is this?
+
 this is a SST and TGA libary combined with new tools for modding the Empire Earth SST image / texture format in order to replace the SST converter of the EE Studio software
 
 ## Included software
+
 ### SSTtool
+
 This software allows you to convert SST image files into TGA and vice versa.
 All the image tiles and resolutions included in the SST file will be extracted and can be packed back into SST.
 
 ### SSTviewer
+
 A simple viewer for SST image files
 
 ## How to use it?
@@ -21,13 +25,12 @@ You can also use the CLI interface via a terminal.
 
 The software runs standalone and no installation is needed. 
 
-
 For further help and documentation you can go to the [wiki pages](https://github.com/EE-modders/SST-tool/wiki).
 
 ## Contribute
+
 - if you have an issue or suggestion feel free to create an [issue](https://github.com/EE-modders/SST-tool/issues) or [pull request](https://github.com/EE-modders/SST-tool/pulls) 
 - you can also join our official [EE-reborn Discord server](https://discord.gg/BjUXbFB).
-
 
 #### why this and not EE Studio?
 
