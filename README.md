@@ -27,6 +27,14 @@ The software runs standalone and no installation is needed.
 
 For further help and documentation you can go to the [wiki pages](https://github.com/EE-modders/SST-tool/wiki).
 
+#### Supported games
+
+- Empire Earth (CD)
+- Empire Earth AoC (addon)
+- Empire Earth Gold Edition (GOG)
+
+**important:** Empire Earth DOMW **will not work**
+
 ## Contribute
 
 - if you have an issue or suggestion feel free to create an [issue](https://github.com/EE-modders/SST-tool/issues) or [pull request](https://github.com/EE-modders/SST-tool/pulls) 
