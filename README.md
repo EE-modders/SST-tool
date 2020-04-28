@@ -34,8 +34,6 @@ For further help and documentation you can go to the [wiki pages](https://github
 - Empire Earth Gold Edition (GOG)
 - Empire Earth DOMW (since v0.9)
 
-
-
 ## Contribute
 
 - if you have an issue or suggestion feel free to create an [issue](https://github.com/EE-modders/SST-tool/issues) or [pull request](https://github.com/EE-modders/SST-tool/pulls) 
