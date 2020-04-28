@@ -15,7 +15,7 @@ from lib.DDS import DDSReader
 
 importlib.reload(lib)
 
-version = "0.9"
+version = "0.10"
 
 magic_number_compressed = b'PK01' # this is the magic number for all compressed files
 confirm = True
@@ -158,7 +158,7 @@ elif filename.split('.')[-1] == "tga":
 
         orgTGA = TGA(tga_binary=tga_bin)
         orgTGA.cleanup()
-        newSST = SST(1, num_tiles=1, x_res=orgTGA.xRes, y_res=orgTGA.yRes, TGAbody=orgTGA.tga_bin)
+        newSST = SST(1, num_tiles=1, x_res=orgTGA.xRes, y_res=orgTGA.yRes, ImageBody=orgTGA.tga_bin)
         if short_output:
             newSST.write_to_file(filename.split('.')[0])
         else:
@@ -191,7 +191,7 @@ elif filename.split('.')[-1] == "tga":
 
         print("creating SST file........")
         orgTGA = TGA(tga_binary=tga_bin)
-        newSST = SST(1, num_tiles=num_images, x_res=orgTGA.xRes, y_res=orgTGA.yRes, TGAbody=orgTGA.tga_bin)
+        newSST = SST(1, num_tiles=num_images, x_res=orgTGA.xRes, y_res=orgTGA.yRes, ImageBody=orgTGA.tga_bin)
         if short_output:
             newSST.write_to_file(filename.split('.')[0])
         else:
