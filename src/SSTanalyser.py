@@ -14,7 +14,7 @@ silent_mode = False
 
 def get_num_TGA_parts(binary_tga_blob, start_pos=0, num_tga=1):
     tga_blob = BytesIO(binary_tga_blob)
-    # This code assumes, that all TGA-tiles have the same TGA-header
+    # This code assumes, that all TGA-tiles have the same TGA-header  #### WHICH IS NOT THE CASE YOU (me) IDIOT!!!!
     tga_blob.seek(start_pos)
     tga_header_blob = tga_blob.read(tga_header_length)
     tga_body = tga_blob.read(-1)
