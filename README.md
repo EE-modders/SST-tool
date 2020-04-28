@@ -29,11 +29,12 @@ For further help and documentation you can go to the [wiki pages](https://github
 
 #### Supported games
 
-- Empire Earth (CD)
+- Empire Earth (CD/retail)
 - Empire Earth AoC (addon)
 - Empire Earth Gold Edition (GOG)
+- Empire Earth DOMW (since v0.9)
 
-**important:** Empire Earth DOMW **will not work**
+
 
 ## Contribute
 
