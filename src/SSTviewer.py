@@ -12,6 +12,7 @@ import lib
 from io import BytesIO
 from lib.SST import SST
 from lib.TGA import TGA
+from lib.DDS import DDSReader
 
 importlib.reload(lib)
 
@@ -19,7 +20,7 @@ import tkinter
 from tkinter import messagebox
 from PIL import Image, ImageTk
 
-version = "0.1"
+version = "0.2"
 
 root = tkinter.Tk()
 root.title("Empire Earth: SST image viewer")
@@ -48,8 +49,16 @@ if sys.argv[1].split('.')[-1] != "sst":
 else:    
     SST = SST()
     SST.read_from_file(sys.argv[1])
-    TGA = TGA(SST.TGAbody)
-    TGA_Images = TGA.get_TGA_parts_3()
+
+    if SST.header["revision"] == b'\x00':
+        EEImage = TGA(tga_binary=SST.ImageBody)
+    elif SST.header["revision"] == b'\x01':
+        EEImage = DDSReader(dds_binary=SST.ImageBody)
+
+    Imageparts = EEImage.get_Image_parts()    
+
+    # if image has multiple resolutions, then only show the first 3
+    if SST.header["resolutions"] > 1: Imageparts = Imageparts[:3]
 
     width = SST.header["x-res"]
     height = SST.header["y-res"]
@@ -62,8 +71,8 @@ else:
 
     # Image load
     render = list()
-    for i, tgaimage in enumerate(TGA_Images):
-        load = Image.open(BytesIO(tgaimage))
+    for i, image in enumerate(Imageparts):
+        load = Image.open(BytesIO(image))
         load = load.resize((width, height))
         render.append(ImageTk.PhotoImage(load))
 

@@ -11,14 +11,18 @@ import importlib
 import lib
 from lib.SST import SST
 from lib.TGA import TGA
+from lib.DDS import DDSReader
 
 importlib.reload(lib)
 
-version = "0.8"
+version = "0.9"
 
 magic_number_compressed = b'PK01' # this is the magic number for all compressed files
 confirm = True
 short_output = False
+single_res = False
+
+file_ignorelist = ["shortcut to tga source 4-bit.sst"]
 
 print("### SST Converter for Empire Earth made by zocker_160")
 print("### version %s" % version)
@@ -35,9 +39,10 @@ def show_help():
     print("important: if you want to convert multiple TGAs into one SST, you can drop multiple files at once onto the executable")
     print()
     print("possible options:")
-    print("-h, --help, -v\tshow this help / version information")
+    print("-h, --help, -v\tshow this help / version information")    
     print("-nc\t\t\"no confirm\" disables all confirmation questions\n\t\tuseful for batch conversion")
     print("-so\t\t\"short output\" doesn't add \"_NEW_\" to the output SST file")
+    print("--single\t\texports only one (the biggest) resolution")
     if confirm: input("press Enter to close........")
     sys.exit()
 
@@ -56,10 +61,13 @@ for i, arg in enumerate(sys.argv):
         show_help()
     if arg == "-nc":
         confirm = False
-        parameter_list.append(i)        
+        parameter_list.append(i)
     if arg == "-so":
         short_output = True
-        parameter_list.append(i)        
+        parameter_list.append(i)
+    if arg == "--single":
+        single_res = True
+        parameter_list.append(i)
 
 # remove commandline parameters
 parameter_list.sort(reverse=True)
@@ -71,7 +79,9 @@ try:
 except IndexError:
     print("ERROR: no file(s) specified!")
     show_exit()
-
+if filename in file_ignorelist:
+    print("This file is on the ignorelist!")
+    show_exit()
 try:
     with open(filename, 'rb') as sstfile:
         print("analysing %s......" % filename)
@@ -82,17 +92,25 @@ except EnvironmentError:
     print("File \"%s\" not found!" % filename)
     show_exit()
 
-# check if input file was TGA or SST file
+# check if input file is SST or TGA
 if filename.split('.')[-1] == "sst":
-    print("found SST file - will convert to TGA.....")
+    print("found SST file - extracting image(s).....")
 
     SST = SST()
     SST.read_from_file(filename)
 
-    TGA = TGA(tga_binary=SST.TGAbody)
     tiles_mult = SST.header["resolutions"] * SST.header["tiles"]
+    
+    if SST.header["revision"] == b'\x00':
+        Image = TGA(tga_binary=SST.ImageBody)    
+        newfilename_type = ".tga"
+    elif SST.header["revision"] == b'\x01':
+        Image = DDSReader(dds_binary=SST.ImageBody)
+        newfilename_type = ".dds"
+    else:
+        print("this version (%s) of SST is not supported!" % SST.header["revision"].hex())
 
-    tgafilename = filename.split('.')[0] + ".tga"
+    newfilename = filename.split('.')[0] + newfilename_type
 
     if tiles_mult < 1:
         print("there is something wrong with your file! | Error code: res %s; tiles %s" % (SST.header["resolutions"], SST.header["tiles"]))
@@ -101,34 +119,33 @@ if filename.split('.')[-1] == "sst":
         print(SST)
 
     if tiles_mult == 1:
-        with open(tgafilename, 'wb') as tgafile:
-            tgafile.write(SST.TGAbody)
+        with open(newfilename, 'wb') as newfile:
+            newfile.write(SST.ImageBody)
     else:
-        print("found more than one tile (according to header):")
+        print("found more than one image part (according to header):")
         #print("number of different resolutions: %d" % SST.header["resolutions"])
         #print("number of different image tiles: %d" % SST.header["tiles"])
-        print("total number of tiles: %d" % tiles_mult)
+        print("total number of parts: %d" % tiles_mult)
         if confirm:
             response = input("continue? (y/n) ")
         else:
             response = "y"
         if response != "y": show_exit()
         
-        global TGA_images
-        TGA_images = TGA.get_TGA_parts_3()
-
-        num_images = len(TGA_images)
+        Imageparts = Image.get_Image_parts()
+        num_images = len(Imageparts)
 
         print("\nactually found number of images: %d \n" % num_images)
         for i in range(num_images):
             if num_images > 1:
                 if SST.header["tiles"] > 1:                
-                    TGA.write_TGA(TGA_images[i], filename.split('.')[0] + "_" + str(i+1) + "-" + str(num_images) + ".tga")
+                    Image.write_file(Imageparts[i], filename.split('.')[0] + "_" + str(i+1) + "-" + str(num_images) + newfilename_type)
                 elif SST.header["resolutions"] > 1:
-                    TGA.write_TGA(TGA_images[i], filename.split('.')[0] + "_" + str(i+1) + "-" + str(num_images) + "_RES_" + ".tga")
+                    Image.write_file(Imageparts[i], filename.split('.')[0] + "_" + str(i+1) + "-" + str(num_images) + "_RES" + newfilename_type)
+                    if single_res: break
             else:
-                TGA.write_TGA(TGA_images[i], filename.split('.')[0] + ".tga")
-            
+                Image.write_file(Imageparts[i], filename.split('.')[0] + newfilename_type)
+
 
 elif filename.split('.')[-1] == "tga":
     print("found TGA file - will convert to SST.....\n")
