@@ -209,7 +209,6 @@ if filename in file_ignorelist:
     print("This file is on the ignorelist!")
     show_exit()
 
-# TODO: move this funtion to the main function! Every file needs to be check for compression!
 if os.path.isfile(filename):
     main_function_convert_file(filename=filename)
 elif os.path.isdir(filename):
