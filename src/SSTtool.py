@@ -117,7 +117,6 @@ def main_function_convert_file(filename: str):
                 else:
                     Image.write_file(Imageparts[i], filename.split('.')[0] + newfilename_type)
 
-
     elif filename.endswith(".tga"):
         print("found TGA file - will convert to SST.....\n")
         num_images = len(sys.argv) - 1
