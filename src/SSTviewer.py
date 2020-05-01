@@ -10,6 +10,7 @@ import sys
 import lib
 import importlib
 import webbrowser
+from io import BytesIO
 from lib.SST import SST as EEsst
 from lib.TGA import TGA
 from lib.DDS import DDSReader
@@ -17,12 +18,13 @@ from lib.DDS import DDSReader
 importlib.reload(lib)
 
 import tkinter as GUI
+#from tkinter import ttk
 from tkinter import messagebox
 from tkinter.filedialog import askopenfilename
 from PIL import Image, ImageTk
 
 
-version = "0.2"
+version = "0.3"
 
 # if image has multiple resolutions, then only show the first 3
 tile_show_limit = 5
@@ -30,7 +32,7 @@ tile_show_limit = 5
 ### setup GUI window
 window = GUI.Tk()
 window.title("Empire Earth: SST viewer")
-
+# window.configure(bg="#1e1e1e") # this looks like shit!
 
 ### GUI functions
 def show_about():
@@ -89,21 +91,27 @@ def load_image(filename: str):
     height = SST.header["y-res"]
     xLen, yLen, xPos, yPos = calc_winsize(xLen=ww, yLen=wh)
 
-    window.geometry("%dx%d+%d+%d" % (xLen, yLen, xPos, yPos)) # TODO make window resize more optimized
+    #window.geometry("%dx%d+%d+%d" % (xLen, yLen, xPos, yPos)) # TODO make window resize more optimized
 
     for i, IMGpart in enumerate(Imageparts):
+        image_normal = Image.open(BytesIO(IMGpart))        
         #load = load.resize((width, height))
-        render = ImageTk.PhotoImage(data=IMGpart)
+        image_alpha = image_normal.split()[-1]
+        render = ImageTk.PhotoImage(image_normal)
+        a_render = ImageTk.PhotoImage(image_alpha)
         print(render)
-        panels[i].configure(image=render)
+        panels[i].configure(image=render, bd=5, relief="ridge")
         panels[i].image = render
+        a_panels[i].configure(image=a_render, bd=5, relief="ridge")
+        a_panels[i].image = a_render
 
         descr[i].configure(text="%dx%d" % (render.width(), render.height()))
+        a_descr[i].configure(text="alpha mask")
         #panel = GUI.Label(window, image=ImageTk.PhotoImage(load), text="PAACKIT")
         #panel.grid(row=i)
         
 
-def calc_winsize(xLen=450, yLen=300):
+def calc_winsize(xLen=800, yLen=600):
     xPos = window.winfo_screenwidth()/2 - xLen/2
     yPos = window.winfo_screenmmheight()/2 + yLen
     return xLen, yLen, xPos, yPos
@@ -111,9 +119,14 @@ def calc_winsize(xLen=450, yLen=300):
 def image_clearall():
     # TODO: replace this fucking magic number
     for i in range(10):
-        panels[i].configure()
+        panels[i].configure(bd=0)
         panels[i].image = None
+
+        a_panels[i].configure(bd=0)
+        a_panels[i].image = None
+
         descr[i].configure(text="")
+        a_descr[i].configure(text="")
 
 def test():
     ### open image in case CLI parameter given
@@ -127,7 +140,7 @@ def test():
 
             newp = GUI.Label(image=itest)
             newp.image = itest
-            newp.pack()
+            newp.pack()            
 
 ### setup GUI
 xLen, yLen, x, y = calc_winsize()
@@ -146,22 +159,43 @@ helpmenu.add_command(label="About", command=show_about)
 menubar.add_cascade(label="File", menu=filemenu)
 menubar.add_cascade(label="Help", menu=helpmenu)
 menubar.add_separator()
-menubar.add_checkbutton(label="show alpha channel", state="normal", onvalue=True, offvalue=False, command=test)
+menubar.add_checkbutton(label="show alpha channel", state="disabled", onvalue=True, offvalue=False, command=test)
 
 window.config(menu=menubar)
 
+### make pictures scrollable TODO
+#container = ttk.Frame(window)
+#container.pack()
+#scrollframe = ttk.Scrollbar(container, orient="vertical")
+scrollframe = window
+
 panels = list()
+a_panels = list()
 descr = list()
+a_descr = list()
 # TODO: replace this fucking magic number
 for i in range(10):
-    panels.append(GUI.Label(window))
-    descr.append(GUI.Label(window))
-    panels[-1].pack()
-    descr[-1].pack()
+    panels.append(GUI.Label(scrollframe))
+    a_panels.append(GUI.Label(scrollframe, borderwidth=5))
+    descr.append(GUI.Label(scrollframe))
+    a_descr.append(GUI.Label(scrollframe))
+    panels[-1].grid(row=(i*2), column=0, padx=5)
+    a_panels[-1].grid(row=(i*2), column=1)
+    descr[-1].grid(row=(i*2+1), column=0)
+    a_descr[-1].grid(row=(i*2+1), column=1)
+    #panels[-1].pack()
+    #descr[-1].pack()
+
+
+### load image when given as CLI parameter
+if len(sys.argv) > 1:
+    load_image(sys.argv[1])
+
+
 
 window.mainloop()
 
-
+"""
 def old():
     window.geometry("%dx%d" % (width, height * max([ SST.header["tiles"], SST.header["resolutions"] ])))
     #root.resizable(0, 0)
@@ -180,3 +214,4 @@ def old():
 
     # open GUI
     window.mainloop()
+"""    
