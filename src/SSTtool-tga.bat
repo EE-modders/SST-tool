@@ -1,1 +1,0 @@
-for %%f in (*.tga) do call SSTtool.exe -nc -so "%%f"
