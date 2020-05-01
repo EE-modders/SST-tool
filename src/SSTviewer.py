@@ -113,7 +113,7 @@ def load_image(filename: str):
 
 def calc_winsize(xLen=800, yLen=600):
     xPos = window.winfo_screenwidth()/2 - xLen/2
-    yPos = window.winfo_screenmmheight()/2 + yLen
+    yPos = window.winfo_screenmmheight()/2 + yLen/2
     return xLen, yLen, xPos, yPos
 
 def image_clearall():
