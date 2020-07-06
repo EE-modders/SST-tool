@@ -31,13 +31,7 @@ jobs:
       run: pyinstaller -F .\src\SSTtool.py
       
     - name: run compiled version
-      run: .\dist\SSTtool.exe -v    
-
-    - name: compile SSTviewer
-      run: pyinstaller --noconsole .\src\SSTviewer.py
-
-    - name: compile SSTviewer standalone
-      run: pyinstaller -F --noconsole .\src\SSTviewer.py      
+      run: .\dist\SSTtool.exe -v        
       
     - name: save SSTtool
       uses: actions/upload-artifact@master
@@ -45,14 +39,3 @@ jobs:
         name: SSTtool_windows
         path: .\dist\SSTtool.exe
       
-    - name: save SSTviewer
-      uses: actions/upload-artifact@master
-      with:
-        name: SSTviewer_windows
-        path: .\dist\SSTviewer
-
-    - name: save SSTviewer standalone
-      uses: actions/upload-artifact@master
-      with:
-        name: SSTviewer_windows_standalone
-        path: .\dist\SSTviewer.exe 
