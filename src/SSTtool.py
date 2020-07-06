@@ -16,10 +16,9 @@ from lib.DDS import DDSReader
 
 importlib.reload(lib)
 
-version = "0.11"
+version = "0.12"
 magic_number_compressed = b'PK01' # this is the magic number for all compressed files
 confirm = True
-short_output = False
 single_res = False
 
 file_ignorelist = ["shortcut to tga source 4-bit.sst"]
@@ -41,7 +40,6 @@ def show_help():
     print("possible options:")
     print("-h, --help, -v\tshow this help / version information")    
     print("-nc\t\t\"no confirm\" disables all confirmation questions\n\t\tuseful for batch conversion")
-    print("-so\t\t\"short output\" doesn't add \"_NEW_\" to the output SST file")
     print("--single\t\texports only one (the biggest) resolution")
     if confirm: input("press Enter to close........")
     sys.exit()
@@ -81,7 +79,7 @@ def main_function_convert_file(filename: str):
             print("this version (%s) of SST is not supported!" % SST.header["revision"].hex())
             show_exit()
 
-        newfilename = filename.split('.')[0] + newfilename_type
+        newfilename = filename.split('.')[0]
 
         if tiles_mult < 1:
             print("there is something wrong with your file! | Error code: res %s; tiles %s" % (SST.header["resolutions"], SST.header["tiles"]))
@@ -90,7 +88,7 @@ def main_function_convert_file(filename: str):
             print(SST)
 
         if tiles_mult == 1:
-            with open(newfilename, 'wb') as newfile:
+            with open(newfilename + newfilename_type, 'wb') as newfile:
                 newfile.write(SST.ImageBody)
         else:
             print("found more than one image part (according to header):")
@@ -110,12 +108,12 @@ def main_function_convert_file(filename: str):
             for i in range(num_images):
                 if num_images > 1:
                     if SST.header["tiles"] > 1:                
-                        Image.write_file(Imageparts[i], filename.split('.')[0] + "_" + str(i+1) + "-" + str(num_images) + newfilename_type)
+                        Image.write_file(Imageparts[i], newfilename + "_" + str(i+1) + "-" + str(num_images) + newfilename_type)
                     elif SST.header["resolutions"] > 1:
-                        Image.write_file(Imageparts[i], filename.split('.')[0] + "_" + str(i+1) + "-" + str(num_images) + "_RES" + newfilename_type)
+                        Image.write_file(Imageparts[i], newfilename + "_" + str(i+1) + "-" + str(num_images) + "_RES" + newfilename_type)
                         if single_res: break
                 else:
-                    Image.write_file(Imageparts[i], filename.split('.')[0] + newfilename_type)
+                    Image.write_file(Imageparts[i], newfilename + newfilename_type)
 
     elif filename.endswith(".tga"):
         print("found TGA file - will convert to SST.....\n")
@@ -129,10 +127,13 @@ def main_function_convert_file(filename: str):
             orgTGA = TGA(tga_binary=tga_bin)
             orgTGA.cleanup()
             newSST = SSTi(1, num_tiles=1, x_res=orgTGA.xRes, y_res=orgTGA.yRes, ImageBody=orgTGA.tga_bin)
-            if short_output:
-                newSST.write_to_file(filename.split('.')[0])
+            
+            newfilename = filename.split('.')[0]
+            if os.path.exists(newfilename + '.sst'):
+                print("This file does already exist! - adding \"_NEW\"")
+                newSST.write_to_file(newfilename + "_NEW", add_extention=True)
             else:
-                newSST.write_to_file(filename.split('.')[0] + "_NEW")
+                newSST.write_to_file(newfilename, add_extention=True)
         else:        
             filenames = sys.argv
             filenames.pop(0)
@@ -162,10 +163,13 @@ def main_function_convert_file(filename: str):
             print("creating SST file........")
             orgTGA = TGA(tga_binary=tga_bin)
             newSST = SSTi(1, num_tiles=num_images, x_res=orgTGA.xRes, y_res=orgTGA.yRes, ImageBody=orgTGA.tga_bin)
-            if short_output:
-                newSST.write_to_file(filename.split('.')[0])
+
+            newfilename = filename.split('.')[0]
+            if os.path.exists(newfilename + '.ssz'):
+                print("This file does already exist! - adding \"_NEW\"")
+                newSST.write_to_file(newfilename + "_NEW", add_extention=True)
             else:
-                newSST.write_to_file(filename.split('.')[0] + "_NEW")
+                newSST.write_to_file(newfilename, add_extention=True)
 
     else:
         print("ERROR: unknown file format! Only TGA and SST are supported \n")
@@ -187,9 +191,6 @@ for i, arg in enumerate(sys.argv):
         show_help()
     if arg == "-nc":
         confirm = False
-        parameter_list.append(i)
-    if arg == "-so":
-        short_output = True
         parameter_list.append(i)
     if arg == "--single":
         single_res = True
