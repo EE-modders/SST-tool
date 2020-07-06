@@ -15,6 +15,8 @@ All the image tiles and resolutions included in the SST file will be extracted a
 
 A simple viewer for SST image files
 
+**important:** this tool moved into separate repo: [GitHub - EE-modders/SST-viewer: Tool for opening Empire Earth SST files](https://github.com/EE-modders/SST-viewer)
+
 ## How to use it?
 
 - Download the latest version of the software you want from the [releases](https://github.com/EE-modders/SST-tool/releases) page.
@@ -22,8 +24,6 @@ A simple viewer for SST image files
 - In order to convert or open the file, you just Drag&Drop the file(s) onto the executable.
 
 - since v0.11 you can also Drag&Drop a folder in order all files inside it
-
-
 
 You can also use the CLI interface via a terminal.
 
