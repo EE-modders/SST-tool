@@ -16,7 +16,7 @@ from lib.DDS import DDSReader
 
 importlib.reload(lib)
 
-version = "0.12"
+version = "0.13"
 magic_number_compressed = b'PK01' # this is the magic number for all compressed files
 confirm = True
 single_res = False
