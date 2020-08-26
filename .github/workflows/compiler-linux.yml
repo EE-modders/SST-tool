@@ -37,4 +37,4 @@ jobs:
       uses: actions/upload-artifact@master
       with:
         name: SSTtool_linux
-        path: ./dist/SSTtool.sh
+        path: ./dist/SSTtool.py
