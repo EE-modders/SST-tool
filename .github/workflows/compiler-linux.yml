@@ -28,10 +28,10 @@ jobs:
       run: python ./src/SSTtool.py -v
     
     - name: pack SSTtool into single script file      
-      run: stickytape ./src/SSTtool.py --copy-shebang --output-file ./dist/SSTtool.sh
+      run: stickytape ./src/SSTtool.py --copy-shebang --output-file ./dist/SSTtool.py
       
     - name: run packed version
-      run: ./dist/SSTtool.sh -v
+      run: ./dist/SSTtool.py -v
 
     - name: save package
       uses: actions/upload-artifact@master
