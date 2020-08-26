@@ -13,28 +13,28 @@ jobs:
       uses: actions/setup-python@v1
       with:
         python-version: 3.7
-    - name: Install dependencies
+    - name: Setup env
       run: |
         python -m pip install --upgrade pip
         pip install Pillow
-        pip install pyinstaller
+        pip install stickytape
+        mkdir ./dist
     - name: python version
       run: python --version
-    - name: pyinstaller version
-      run: pyinstaller --version
-    
+    - name: stickytape version
+      run: stickytape --help          
     
     - name: run SSTtool directly
       run: python ./src/SSTtool.py -v
     
-    - name: compile SSTtool
-      run: pyinstaller -F ./src/SSTtool.py
+    - name: pack SSTtool into single script file      
+      run: stickytape ./src/SSTtool.py --copy-shebang --output-file ./dist/SSTtool.sh
       
-    - name: run compiled version
-      run: ./dist/SSTtool -v
+    - name: run packed version
+      run: ./dist/SSTtool.sh -v
 
-    - name: save compiled SSTtool
+    - name: save package
       uses: actions/upload-artifact@master
       with:
         name: SSTtool_linux
-        path: ./dist
+        path: ./dist/SSTtool.sh
