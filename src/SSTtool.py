@@ -20,6 +20,7 @@ version = "0.12"
 magic_number_compressed = b'PK01' # this is the magic number for all compressed files
 confirm = True
 single_res = False
+force_overwrite = False
 
 file_ignorelist = ["shortcut to tga source 4-bit.sst"]
 
@@ -41,6 +42,7 @@ def show_help():
     print("-h, --help, -v\tshow this help / version information")    
     print("-nc\t\t\"no confirm\" disables all confirmation questions\n\t\tuseful for batch conversion")
     print("--single\t\texports only one (the biggest) resolution")
+    print("--force\t\tforces to overwrite an existing file")
     if confirm: input("press Enter to close........")
     sys.exit()
 
@@ -129,7 +131,7 @@ def main_function_convert_file(filename: str):
             newSST = SSTi(1, num_tiles=1, x_res=orgTGA.xRes, y_res=orgTGA.yRes, ImageBody=orgTGA.tga_bin)
             
             newfilename = filename.split('.')[0]
-            if os.path.exists(newfilename + '.sst'):
+            if os.path.exists(newfilename + '.sst') and not force_overwrite:
                 print("This file does already exist! - adding \"_NEW\"")
                 newSST.write_to_file(newfilename + "_NEW", add_extention=True)
             else:
@@ -165,7 +167,7 @@ def main_function_convert_file(filename: str):
             newSST = SSTi(1, num_tiles=num_images, x_res=orgTGA.xRes, y_res=orgTGA.yRes, ImageBody=orgTGA.tga_bin)
 
             newfilename = filename.split('.')[0]
-            if os.path.exists(newfilename + '.ssz'):
+            if os.path.exists(newfilename + '.ssz') and not force_overwrite:
                 print("This file does already exist! - adding \"_NEW\"")
                 newSST.write_to_file(newfilename + "_NEW", add_extention=True)
             else:
@@ -195,6 +197,9 @@ for i, arg in enumerate(sys.argv):
     if arg == "--single":
         single_res = True
         parameter_list.append(i)
+    if arg == "--force":
+        force_overwrite = True
+        parameter_list.append(i)        
 
 # remove commandline parameters
 parameter_list.sort(reverse=True)
