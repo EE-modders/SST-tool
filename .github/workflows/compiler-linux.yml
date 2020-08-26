@@ -31,7 +31,7 @@ jobs:
       run: stickytape ./src/SSTtool.py --copy-shebang --output-file ./dist/SSTtool.py
       
     - name: run packed version
-      run: ./dist/SSTtool.py -v
+      run: python3 ./dist/SSTtool.py -v
 
     - name: save package
       uses: actions/upload-artifact@master
