@@ -31,14 +31,10 @@ For further help and documentation you can go to the [wiki pages](https://github
 
 #### Linux
 
-- you need python3 to be installed
-
-- download the Linux package from the [releases](https://github.com/EE-modders/SST-tool/releases) page.
-
+- you need Python3 to be installed
+- download the standalone Python package from the [releases](https://github.com/EE-modders/SST-tool/releases) page.
 - make it executable: `chmod +x ./SSTtool.py`
-
 - run it: `./SSTtool.py`
-
 - (optional) copy it to `~/.local/bin` in order to access it from everywhere
 
 ### Supported games
