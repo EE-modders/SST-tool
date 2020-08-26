@@ -20,10 +20,8 @@ A simple viewer for SST image files
 ## How to use it?
 
 - Download the latest version of the software you want from the [releases](https://github.com/EE-modders/SST-tool/releases) page.
-
 - In order to convert or open the file, you just Drag&Drop the file(s) onto the executable.
-
-- since v0.11 you can also Drag&Drop a folder in order all files inside it
+- since v0.11 you can also Drag&Drop a folder in order to convert all files inside it
 
 You can also use the CLI interface via a terminal.
 
@@ -31,7 +29,19 @@ The software runs standalone and no installation is needed.
 
 For further help and documentation you can go to the [wiki pages](https://github.com/EE-modders/SST-tool/wiki).
 
-#### Supported games
+#### Linux
+
+- you need python3 to be installed
+
+- download the Linux package from the [releases](https://github.com/EE-modders/SST-tool/releases) page.
+
+- make it executable: `chmod +x ./SSTtool.py`
+
+- run it: `./SSTtool.py`
+
+- (optional) copy it to `~/.local/bin` in order to access it from everywhere
+
+### Supported games
 
 - Empire Earth (CD/retail)
 - Empire Earth AoC (addon)
