@@ -41,7 +41,7 @@ def show_help():
     print("possible options:")
     print("-h, --help, -v\tshow this help / version information")    
     print("-nc\t\t\"no confirm\" disables all confirmation questions\n\t\tuseful for batch conversion")
-    print("--single\t\texports only one (the biggest) resolution")
+    print("--single\texports only one (the biggest) resolution")
     print("--force\t\tforces to overwrite an existing file")
     if confirm: input("press Enter to close........")
     sys.exit()
