@@ -2,6 +2,7 @@
 bin/
 src/test.py
 
+_*
 __*
 
 *.desktop
