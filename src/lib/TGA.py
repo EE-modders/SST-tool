@@ -76,10 +76,8 @@ class TGA:
 
     def cleanup(self):
         """This function removes all metadata etc by removing everything after the length specified by the TGA header"""
-        tga_old = BytesIO(self.tga_bin)
         length = self.tga_header_length + self.calc_TGA_body_length(self.xRes, self.yRes, self.BitDepth)
-
-        self.tga_bin = tga_old.read(length)
+        self.tga_bin = self.tga_bin[:length]
 
     def write_file(self, tga_binary, filename: str):
         with open(filename, 'wb') as tgafile:
