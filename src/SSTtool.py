@@ -16,7 +16,7 @@ from lib.DDS import DDSReader
 
 importlib.reload(lib)
 
-version = "0.13"
+version = "0.14"
 magic_number_compressed = b'PK01' # this is the magic number for all compressed files
 confirm = True
 single_res = False
@@ -140,6 +140,7 @@ def main_function_convert_file(filename: str):
             filenames = sys.argv
             filenames.pop(0)
             tga_bin = b''
+            x_tmp, y_tmp = 0, 0
 
             print("following %d images as input:" % num_images )
             print("watch out for the right order!!\n")
@@ -158,9 +159,16 @@ def main_function_convert_file(filename: str):
             for j in range(num_images):
                 with open(filenames[j], 'rb') as tgafile:
                     tmpTGA = TGA(tgafile.read())
-                    tmpTGA.cleanup()
-                    tga_bin += tmpTGA.tga_bin
-                    tga_bin += b'\x00'
+                # on multi tile images, all *have to* have the exact same resolution, you cannot mix resolutions!
+                if j == 0:
+                    x_tmp, y_tmp = tmpTGA.xRes, tmpTGA.yRes
+                else:
+                    if x_tmp != tmpTGA.xRes or y_tmp != tmpTGA.yRes:
+                        print("ERROR: All tiles have to have the exact same resolution!")
+                        show_exit()
+                tmpTGA.cleanup()
+                tga_bin += tmpTGA.tga_bin
+                tga_bin += b'\x00'
 
             print("creating SST file........")
             orgTGA = TGA(tga_binary=tga_bin)
