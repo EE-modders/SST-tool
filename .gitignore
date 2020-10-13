@@ -1,5 +1,6 @@
 .directory
 bin/
+samples/
 src/test.py
 
 _*
