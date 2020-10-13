@@ -39,7 +39,9 @@ For further help and documentation you can go to the [wiki pages](https://github
 
 ### Supported games
 
-- Empire Earth (CD/retail)
+- Empire Earth BETA
+- Empire Earth DEMO (since v0.15)
+- Empire Earth (CD / retail)
 - Empire Earth AoC (addon)
 - Empire Earth Gold Edition (GOG)
 - Empire Earth DOMW (since v0.9)
