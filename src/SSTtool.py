@@ -77,7 +77,10 @@ def main_function_convert_file(filename: str):
             print(str(e))
             show_exit()
 
-        newfilename = filename.split(os.sep)[0] + filename.split('.')[-2]
+        if filename.startswith('..'):
+            newfilename = '..' + filename.split('.')[-2]
+        else:
+            newfilename = filename.split('.')[-2]
         print(newfilename)
 
         if tiles_mult < 1:
