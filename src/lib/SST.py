@@ -8,6 +8,11 @@ Created on 05.01.2020 19:47 CET
 This is the main lib for SST files from Empire Earth
 """
 
+from lib.ImgInterface import ImgInterface
+from lib.TGA import TGA
+from lib.DDS import DDSReader
+from lib.JFIF import JFIF
+
 class SST:
     def __init__(self, num_res=0, num_tiles=0, x_res=0, y_res=0, ImageBody=b''):
         self.header = {
@@ -21,7 +26,7 @@ class SST:
         }
         self.ImageBody = ImageBody
 
-    def read_from_file(self, filename: str):
+    def read_from_file(self, filename: str) -> None:
         """reads an SST input file and parses the SST-header and body"""
         with open(filename, 'rb') as sstfile:
 
@@ -39,7 +44,7 @@ class SST:
 
             self.ImageBody = sstfile.read(-1)
 
-    def write_to_file(self, filename: str, add_extention=True):
+    def write_to_file(self, filename: str, add_extention=True) -> None:
         """writes SST header and body to a file using the information of the SST object"""    
         outputfile = filename
         if add_extention: outputfile += '.sst'
@@ -49,8 +54,7 @@ class SST:
 
             sstfile.write(self.get_header_bytes() + self.ImageBody)
 
-
-    def get_header_bytes(self):
+    def get_header_bytes(self) -> bytes:
         """returns the SST header in byte format"""
         result = b''
         #print(self.header)
@@ -63,6 +67,18 @@ class SST:
         result += self.header["unknown"]
         #print(result)
         return result
+
+    def unpack(self) -> ImgInterface:
+        """Returns either a TGA, DDS or JFIF object"""
+        if self.header["revision"] == b'\x00' and self.header["unknown"] == b'\x00':
+            return TGA(tga_binary=self.ImageBody)
+        elif self.header["revision"] == b'\x00' and self.header["unknown"] == b'\x03':
+            return JFIF(jfif_binary=self.ImageBody)
+        elif self.header["revision"] == b'\x01':
+            return DDSReader(dds_binary=self.ImageBody)
+        else:
+            raise TypeError("This version of the SST format is not supported! - please contact maintainer ;)")
+
 
     def __str__(self):
         output = "SST Header: \n"

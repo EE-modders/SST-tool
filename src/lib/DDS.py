@@ -6,8 +6,11 @@ Created on 27.01.2020 22:05 CET
 @author: zocker_160
 """
 
-class DDSReader:
+from lib.ImgInterface import ImgInterface
+
+class DDSReader(ImgInterface):
     def __init__(self, dds_binary: bytes):
+        self.filetype = ".dds"
         self.magic_number_dds = b'\x44\x44\x53\x20\x7c\x00\x00\x00'        
         self.dds_bin = dds_binary
 
@@ -19,6 +22,6 @@ class DDSReader:
         return Images
 
     def write_file(self, binary: bytes, filename: str):
-        with open(filename, "wb") as ddsfile:
+        with open(filename + self.filetype, "wb") as ddsfile:
             ddsfile.write(binary)
     

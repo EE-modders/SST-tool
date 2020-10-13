@@ -16,7 +16,7 @@ from lib.DDS import DDSReader
 
 importlib.reload(lib)
 
-version = "0.14"
+version = "0.15"
 magic_number_compressed = b'PK01' # this is the magic number for all compressed files
 confirm = True
 single_res = False
@@ -70,18 +70,15 @@ def main_function_convert_file(filename: str):
         SST.read_from_file(filename)
 
         tiles_mult = SST.header["resolutions"] * SST.header["tiles"]
-        
-        if SST.header["revision"] == b'\x00':
-            Image = TGA(tga_binary=SST.ImageBody)    
-            newfilename_type = ".tga"
-        elif SST.header["revision"] == b'\x01':
-            Image = DDSReader(dds_binary=SST.ImageBody)
-            newfilename_type = ".dds"
-        else:
-            print("this version (%s) of SST is not supported!" % SST.header["revision"].hex())
+
+        try:        
+            Image = SST.unpack()
+        except TypeError as e:
+            print(str(e))
             show_exit()
 
-        newfilename = filename.split('.')[0]
+        newfilename = filename.split(os.sep)[0] + filename.split('.')[-2]
+        print(newfilename)
 
         if tiles_mult < 1:
             print("there is something wrong with your file! | Error code: res %s; tiles %s" % (SST.header["resolutions"], SST.header["tiles"]))
@@ -90,8 +87,7 @@ def main_function_convert_file(filename: str):
             print(SST)
 
         if tiles_mult == 1:
-            with open(newfilename + newfilename_type, 'wb') as newfile:
-                newfile.write(SST.ImageBody)
+            Image.write_file(SST.ImageBody, newfilename)
         else:
             print("found more than one image part (according to header):")
             #print("number of different resolutions: %d" % SST.header["resolutions"])
@@ -110,12 +106,12 @@ def main_function_convert_file(filename: str):
             for i in range(num_images):
                 if num_images > 1:
                     if SST.header["tiles"] > 1:                
-                        Image.write_file(Imageparts[i], newfilename + "_" + str(i+1) + "-" + str(num_images) + newfilename_type)
+                        Image.write_file(Imageparts[i], f"{newfilename}_{i+1}-{num_images}")
                     elif SST.header["resolutions"] > 1:
-                        Image.write_file(Imageparts[i], newfilename + "_" + str(i+1) + "-" + str(num_images) + "_RES" + newfilename_type)
+                        Image.write_file(Imageparts[i], f"{newfilename}_{i+1}-{num_images}_RES")
                         if single_res: break
                 else:
-                    Image.write_file(Imageparts[i], newfilename + newfilename_type)
+                    Image.write_file(Imageparts[i], newfilename)
 
     elif filename.endswith(".tga"):
         print("found TGA file - will convert to SST.....\n")
@@ -231,7 +227,7 @@ elif os.path.isdir(filename):
 
     print("Folder found - what do you want to do? \n")
     print("Convert all files")
-    print("(1)\tSST -> TGA")
+    print("(1)\tSST -> TGA / JFIF")
     print("(2)\tTGA -> SST")
 
     selection = input("selection: ")

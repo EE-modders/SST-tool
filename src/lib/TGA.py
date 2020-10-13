@@ -8,8 +8,11 @@ Created on 05.01.2020 21:50 CET
 import sys
 from io import BytesIO
 
-class TGA:
+from lib.ImgInterface import ImgInterface
+
+class TGA(ImgInterface):
     def __init__(self, tga_binary = b''):
+        self.filetype = ".tga"
         self.tga_bin = tga_binary
         self.tga_header_length = 18
         self.TGAheader = self.get_header()
@@ -79,8 +82,8 @@ class TGA:
         length = self.tga_header_length + self.calc_TGA_body_length(self.xRes, self.yRes, self.BitDepth)
         self.tga_bin = self.tga_bin[:length]
 
-    def write_file(self, tga_binary, filename: str):
-        with open(filename, 'wb') as tgafile:
+    def write_file(self, tga_binary: bytes, filename: str):
+        with open(filename + self.filetype, "wb") as tgafile:
             tgafile.write(tga_binary)
     
 
