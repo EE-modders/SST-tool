@@ -32,14 +32,14 @@ file_ignorelist = ["shortcut to tga source 4-bit.sst"]
 
 fromCLI = False  # this is true, when function is called from CLI and not from another python module
 
-print("### SST Converter for Empire Earth made by zocker_160")
-print("### version %s" % version)
-print("###")
-print("### if you have any issue, pls feel free to report it:")
-print("### https://github.com/EE-modders/SST-tool/issues")
-print("###")
-print("###----------------------------------------------\n")
-
+def show_info():
+    print("### SST Converter for Empire Earth made by zocker_160")
+    print("### version %s" % version)
+    print("###")
+    print("### if you have any issue, pls feel free to report it:")
+    print("### https://github.com/EE-modders/SST-tool/issues")
+    print("###")
+    print("###----------------------------------------------\n")
 
 def _convert_files(files: list, confirm: bool, force_overwrite: bool, single_res: bool, outputlocation=""):
     # add os.sep when outputlocation is set
@@ -236,6 +236,7 @@ def cli_params():
 
 
 if __name__ == "__main__":
+    show_info()
     # in need to do this because fucking Windows users think that the software "does not work" otherwise......
     if len(sys.argv) <= 1:
         print("Please use Drag&Drop or the commandline interface!")
