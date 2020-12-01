@@ -6,7 +6,7 @@ Created on 13.10.2020 12:30 CET
 @author: zocker_160
 """
 
-from lib.ImgInterface import ImgInterface
+from .ImgInterface import ImgInterface
 
 class JFIF(ImgInterface):
     def __init__(self, jfif_binary: bytes):

@@ -8,7 +8,7 @@ Created on 05.01.2020 21:50 CET
 import sys
 from io import BytesIO
 
-from lib.ImgInterface import ImgInterface
+from .ImgInterface import ImgInterface
 
 class TGA(ImgInterface):
     def __init__(self, tga_binary = b''):

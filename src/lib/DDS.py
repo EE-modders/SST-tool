@@ -6,7 +6,7 @@ Created on 27.01.2020 22:05 CET
 @author: zocker_160
 """
 
-from lib.ImgInterface import ImgInterface
+from .ImgInterface import ImgInterface
 
 class DDSReader(ImgInterface):
     def __init__(self, dds_binary: bytes):

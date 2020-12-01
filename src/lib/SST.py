@@ -8,10 +8,10 @@ Created on 05.01.2020 19:47 CET
 This is the main lib for SST files from Empire Earth
 """
 
-from lib.ImgInterface import ImgInterface
-from lib.TGA import TGA
-from lib.DDS import DDSReader
-from lib.JFIF import JFIF
+from .ImgInterface import ImgInterface
+from .TGA import TGA
+from .DDS import DDSReader
+from .JFIF import JFIF
 
 class SST:
     def __init__(self, num_res=0, num_tiles=0, x_res=0, y_res=0, ImageBody=b''):
