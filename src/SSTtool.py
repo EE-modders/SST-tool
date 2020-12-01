@@ -8,15 +8,22 @@ Created on 05.01.2020 19:01 CET
 
 import os
 import sys
-import importlib
-import lib
 import argparse
 
-from lib.SST import SST as SSTi
-from lib.TGA import TGA
-from lib.DDS import DDSReader
+if __name__ == "__main__":
+    import importlib
+    import lib
 
-importlib.reload(lib)
+    from lib.SST import SST as SSTi
+    from lib.TGA import TGA
+    from lib.DDS import DDSReader
+
+    importlib.reload(lib)
+else:
+    from .lib.SST import SST as SSTi
+    from .lib.TGA import TGA
+    from .lib.DDS import DDSReader
+
 
 version = "0.17"
 magic_number_compressed = b'PK01' # this is the magic number for all compressed files
