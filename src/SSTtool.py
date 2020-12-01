@@ -10,19 +10,20 @@ import os
 import sys
 import importlib
 import lib
+import argparse
+
 from lib.SST import SST as SSTi
 from lib.TGA import TGA
 from lib.DDS import DDSReader
 
 importlib.reload(lib)
 
-version = "0.16"
+version = "0.17"
 magic_number_compressed = b'PK01' # this is the magic number for all compressed files
-confirm = True
-single_res = False
-force_overwrite = False
 
 file_ignorelist = ["shortcut to tga source 4-bit.sst"]
+
+fromCLI = False  # this is true, when function is called from CLI and not from another python module
 
 print("### SST Converter for Empire Earth made by zocker_160")
 print("### version %s" % version)
@@ -32,222 +33,217 @@ print("### https://github.com/EE-modders/SST-tool/issues")
 print("###")
 print("###----------------------------------------------\n")
 
-def show_help():
-    # TODO: "--info" (show header information only)
-    print("USAGE: SSTtool [options] <inputfile1> <inputfile2> ... | <inputfolder>")
-    print("or you can just DRAG & DROP the image file or folder onto the executable")
-    print("important: if you want to convert multiple TGAs into one SST, you can drop multiple files at once onto the executable")
-    print()
-    print("possible options:")
-    print("-h, --help, -v\tshow this help / version information")    
-    print("-nc\t\t\"no confirm\" disables all confirmation questions\n\t\tuseful for batch conversion")
-    print("--single\texports only one (the biggest) resolution")
-    print("--force\t\tforces to overwrite an existing file")
-    if confirm: input("press Enter to close........")
-    sys.exit()
 
-def show_exit():
-    input("\npress Enter to close.......\n")
-    sys.exit()
+def _convert_files(files: list, confirm: bool, force_overwrite: bool, single_res: bool):
+    for i, file in enumerate(files):
+        # check for file existence and compression
+        try:
+            with open(file, 'rb') as sstfile:
+                print("analysing %s......" % file)
+                if sstfile.read(4) == magic_number_compressed:
+                    raise RuntimeError("\nyou need to decompress the file first!\n")
+        except EnvironmentError:
+            raise FileNotFoundError("File \"%s\" not found!" % file)
 
-def main_function_convert_file(filename: str):
-    # check for file existence and compression
-    try:
-        with open(filename, 'rb') as sstfile:
-            print("analysing %s......" % filename)
-            if sstfile.read(4) == magic_number_compressed:
-                print("\nyou need to decompress the file first!\n")
-                show_exit()
-    except EnvironmentError:
-        print("File \"%s\" not found!" % filename)
-        show_exit()
+        # check if file is in ignorelist
+        if file in file_ignorelist:
+            print("This file is on the ignorelist! Skipping...")
+            continue
 
-    # check if input file is SST or TGA
-    if filename.endswith(".sst"):
-        print("found SST file - extracting image(s).....")
+        # check if input file is SST or TGA
+        if file.endswith(".sst"):
+            print("found SST file - extracting image(s).....")
 
-        SST = SSTi()
-        SST.read_from_file(filename)
+            SST = SSTi()
+            SST.read_from_file(file)
 
-        tiles_mult = SST.header["resolutions"] * SST.header["tiles"]
+            tiles_mult = SST.header["resolutions"] * SST.header["tiles"]
 
-        try:        
-            Image = SST.unpack()
-        except TypeError as e:
-            print(str(e))
-            show_exit()
+            try:
+                Image = SST.unpack()
+            except TypeError as e:
+                raise
 
-        if filename.startswith('..'):
-            newfilename = '..' + filename.split('.')[-2]
-        else:
-            newfilename = filename.split('.')[-2]
-        print(newfilename)
-
-        if tiles_mult < 1:
-            print("there is something wrong with your file! | Error code: res %s; tiles %s" % (SST.header["resolutions"], SST.header["tiles"]))
-        else:        
-            print("converting......\n")
-            print(SST)
-
-        if tiles_mult == 1:
-            Image.write_file(SST.ImageBody, newfilename)
-        else:
-            print("found more than one image part (according to header):")
-            #print("number of different resolutions: %d" % SST.header["resolutions"])
-            #print("number of different image tiles: %d" % SST.header["tiles"])
-            print("total number of parts: %d" % tiles_mult)
-            if confirm:
-                response = input("continue? (y/n) ")
+            if file.startswith('..'):
+                newfilename = '..' + file.split('.')[-2]
             else:
-                response = "y"
-            if response != "y": show_exit()
-            
-            Imageparts = Image.get_Image_parts()
-            num_images = len(Imageparts)
+                newfilename = file.split('.')[-2]
+            print(newfilename)
 
-            print("\nactually found number of images: %d \n" % num_images)
-            for i in range(num_images):
-                if num_images > 1:
-                    if SST.header["tiles"] > 1:                
-                        Image.write_file(Imageparts[i], f"{newfilename}_{i+1}-{num_images}")
-                    elif SST.header["resolutions"] > 1:
-                        Image.write_file(Imageparts[i], f"{newfilename}_{i+1}-{num_images}_RES")
-                        if single_res: break
+            if tiles_mult < 1:
+                raise TypeError("there is something wrong with your file! | Error code: res %s; tiles %s" % (SST.header["resolutions"], SST.header["tiles"]))
+            else:
+                print("converting......\n")
+                print(SST)
+
+            if tiles_mult == 1:
+                Image.write_file(SST.ImageBody, newfilename)
+            else:
+                print("found more than one image part (according to header):")
+                #print("number of different resolutions: %d" % SST.header["resolutions"])
+                #print("number of different image tiles: %d" % SST.header["tiles"])
+                print("total number of parts: %d" % tiles_mult)
+                if confirm:
+                    response = input("continue? (y/n) ")
                 else:
-                    Image.write_file(Imageparts[i], newfilename)
+                    response = "y"
+                if response != "y": raise KeyboardInterrupt("aborted by user...")
 
-    elif filename.endswith(".tga"):
-        print("found TGA file - will convert to SST.....\n")
-        num_images = len(sys.argv) - 1
+                Imageparts = Image.get_Image_parts()
+                num_images = len(Imageparts)
 
-        if num_images == 1:
-            print("creating SST........")
-            with open(filename, 'rb') as tgafile:
-                tga_bin = tgafile.read()
+                print("\nactually found number of images: %d \n" % num_images)
+                for i in range(num_images):
+                    if num_images > 1:
+                        if SST.header["tiles"] > 1:                
+                            Image.write_file(Imageparts[i], f"{newfilename}_{i+1}-{num_images}")
+                        elif SST.header["resolutions"] > 1:
+                            Image.write_file(Imageparts[i], f"{newfilename}_{i+1}-{num_images}_RES")
+                            if single_res: break
+                    else:
+                        Image.write_file(Imageparts[i], newfilename)
 
-            orgTGA = TGA(tga_binary=tga_bin)
-            orgTGA.cleanup()
-            newSST = SSTi(1, num_tiles=1, x_res=orgTGA.xRes, y_res=orgTGA.yRes, ImageBody=orgTGA.tga_bin)
-            
-            newfilename = filename.split('.')[0]
-            if os.path.exists(newfilename + '.sst') and not force_overwrite:
-                print("This file does already exist! - adding \"_NEW\"")
-                newSST.write_to_file(newfilename + "_NEW", add_extention=True)
-            else:
-                newSST.write_to_file(newfilename, add_extention=True)
-        else:        
-            filenames = sys.argv
-            filenames.pop(0)
-            tga_bin = b''
-            x_tmp, y_tmp = 0, 0
+        elif file.endswith(".tga"):
+            print("found TGA file - will convert to SST.....\n")
 
-            print("following %d images as input:" % num_images )
-            print("watch out for the right order!!\n")
+            # check if this item is the first of the input list
+            if i == 0 and len(files) > 1:
+                # convert all images into one SST with multiple tiles
+                tga_bin = b''
+                x_tmp, y_tmp = 0, 0
 
-            for i in range(num_images):
-                print("%d: %s" % (i+1, filenames[i]))
-            print()
-            if confirm:
-                response = input("is that correct? (y/n) ")
-            else:
-                response = "y"
-            if response != "y": show_exit()
+                if fromCLI:
+                    print("following %d images as input:" % len(files) )
+                    print("watch out for the right order!!\n")
 
-            print("bundling TGA images........")
+                    for y, fl in enumerate(files):
+                        print("%d: %s" % (y+1, fl))
+                    print()
+                    if confirm:
+                        response = input("is that correct? (y/n) ")
+                    else:
+                        response = "y"
+                    if response != "y": raise KeyboardInterrupt("aborted by user...")
 
-            for j in range(num_images):
-                with open(filenames[j], 'rb') as tgafile:
-                    tmpTGA = TGA(tgafile.read())
-                # on multi tile images, all *have to* have the exact same resolution, you cannot mix resolutions!
-                if j == 0:
-                    x_tmp, y_tmp = tmpTGA.xRes, tmpTGA.yRes
+                print("bundling TGA images........")
+
+                for z, f in enumerate(files):
+                    with open(f, 'rb') as tgafile:
+                        tmpTGA = TGA(tgafile.read())
+                    # on multi tile images, all *have to* have the exact same resolution, you cannot mix resolutions!
+                    if z == 0:
+                        x_tmp, y_tmp = tmpTGA.xRes, tmpTGA.yRes
+                    else:
+                        if x_tmp != tmpTGA.xRes or y_tmp != tmpTGA.yRes:
+                            raise TypeError("ERROR: All tiles have to have the exact same resolution!")
+                    tmpTGA.cleanup()
+                    tga_bin += tmpTGA.tga_bin
+                    tga_bin += b'\x00'
+
+                print("creating SST file........")
+                orgTGA = TGA(tga_binary=tga_bin)
+                newSST = SSTi(1, num_tiles=len(files), x_res=orgTGA.xRes, y_res=orgTGA.yRes, ImageBody=orgTGA.tga_bin)
+
+                newfilename = file.split('.')[0]
+                if os.path.exists(newfilename + '.ssz') and not force_overwrite:
+                    print("This file does already exist! - adding \"_NEW\"")
+                    newSST.write_to_file(newfilename + "_NEW", add_extention=True)
                 else:
-                    if x_tmp != tmpTGA.xRes or y_tmp != tmpTGA.yRes:
-                        print("ERROR: All tiles have to have the exact same resolution!")
-                        show_exit()
-                tmpTGA.cleanup()
-                tga_bin += tmpTGA.tga_bin
-                tga_bin += b'\x00'
+                    newSST.write_to_file(newfilename, add_extention=True)
 
-            print("creating SST file........")
-            orgTGA = TGA(tga_binary=tga_bin)
-            newSST = SSTi(1, num_tiles=num_images, x_res=orgTGA.xRes, y_res=orgTGA.yRes, ImageBody=orgTGA.tga_bin)
-
-            newfilename = filename.split('.')[0]
-            if os.path.exists(newfilename + '.ssz') and not force_overwrite:
-                print("This file does already exist! - adding \"_NEW\"")
-                newSST.write_to_file(newfilename + "_NEW", add_extention=True)
+                # break out of the main loop
+                break
             else:
-                newSST.write_to_file(newfilename, add_extention=True)
+                # convert just this one file
+                print("creating SST........")
 
-    else:
-        print("ERROR: unknown file format! Only TGA and SST are supported \n")
-        show_exit()
-    
+                with open(file, 'rb') as tgafile:
+                    tga_bin = tgafile.read()
+
+                orgTGA = TGA(tga_binary=tga_bin)
+                orgTGA.cleanup()
+                newSST = SSTi(1, num_tiles=1, x_res=orgTGA.xRes, y_res=orgTGA.yRes, ImageBody=orgTGA.tga_bin)
+                
+                newfilename = file.split('.')[0]
+                if os.path.exists(newfilename + '.sst') and not force_overwrite:
+                    print("This file does already exist! - adding \"_NEW\"")
+                    newSST.write_to_file(newfilename + "_NEW", add_extention=True)
+                else:
+                    newSST.write_to_file(newfilename, add_extention=True)
+        else:
+            raise TypeError("ERROR: unknown file format! Only TGA and SST are supported \n")
+        
     print("done!")
-    if confirm: input("press Enter to close.......")
 
 
+def main(inputfiles: list, selection: str, confirm=False, overwrite=False, single_res=False):
 
-if len(sys.argv) <= 1:
-    show_help()
+    firstfile = inputfiles[0]
 
-parameter_list = list()
+    if os.path.isfile(firstfile):
+        _convert_files(inputfiles, confirm=confirm, force_overwrite=overwrite, single_res=single_res)
+    elif os.path.isdir(firstfile):
+        filepath = firstfile
+        if not filepath.endswith(os.sep): filepath += os.sep
+        filelist = list()
 
-for i, arg in enumerate(sys.argv):
-    if arg == "-h" or arg == "--help" or arg == "-v":
-        confirm = False
-        show_help()
-    if arg == "-nc":
-        confirm = False
-        parameter_list.append(i)
-    if arg == "--single":
-        single_res = True
-        parameter_list.append(i)
-    if arg == "--force":
-        force_overwrite = True
-        parameter_list.append(i)        
+        if fromCLI and not selection:
+            print("Folder found - what do you want to do? \n")
+            print("Convert all files")
+            print("(1)\tSST -> TGA / JFIF")
+            print("(2)\tTGA -> SST")
 
-# remove commandline parameters
-parameter_list.sort(reverse=True)
-for param in parameter_list:
-    sys.argv.pop(param)
+            selection = input("selection: ")
 
-try:
-    filename = sys.argv[1]
-except IndexError:
-    print("ERROR: no file(s) or folder specified!")
-    show_exit()
-if filename in file_ignorelist:
-    print("This file is on the ignorelist!")
-    show_exit()
+        if selection == "1":
+            filetype = ".sst"
+        elif selection == "2":
+            filetype = ".tga"
+        else:
+            raise TypeError("ERROR: Invalid selection!")
 
-if os.path.isfile(filename):
-    main_function_convert_file(filename=filename)
-elif os.path.isdir(filename):
-    filepath = filename
-    confirm = False
+        for f in os.listdir(filepath):
+            if f.endswith(filetype):
+                print("found file:", f)
+                filelist.append(filepath + f)
 
-    print("Folder found - what do you want to do? \n")
-    print("Convert all files")
-    print("(1)\tSST -> TGA / JFIF")
-    print("(2)\tTGA -> SST")
-
-    selection = input("selection: ")
-
-    if selection == "1":
-        filetype = ".sst"
-    elif selection == "2":
-        filetype = ".tga"
+        _convert_files(filelist, confirm=confirm, force_overwrite=overwrite, single_res=single_res)
     else:
-        show_exit()
+        raise TypeError("ERROR: Input is neither file nor folder!")
 
-    for f in os.listdir(filepath):
-        if f.endswith(filetype):  
-            print("trying to open", f)
-            if not filepath.endswith(os.sep): filepath += os.sep
-            main_function_convert_file(filepath + f)
-    show_exit()
-else:
-    print("ERROR: Input is neither file nor folder!")
-    show_exit()
+
+def cli_params():
+    parser = argparse.ArgumentParser(description="SST Converter for Empire Earth made by zocker_160")
+
+    parser.add_argument("INPUT", nargs='+', help="input file(s) or folder")
+
+    parser.add_argument("-nc", dest="confirm", action="store_false", help="disable all confirm messages")
+    parser.add_argument("-s", "--single", dest="single_res", action="store_true", help="export only one (the biggest) resolution")
+    parser.add_argument("-f", "--force", dest="force_overwrite", action="store_true", help="forces to overwrite existing files without asking")
+    parser.add_argument("-v", "--version", action="version", version=version)
+
+    return parser.parse_args()
+
+
+if __name__ == "__main__":
+    CLI = cli_params()
+
+    print(CLI)
+
+    fromCLI = True
+
+    try:
+        main(
+            inputfiles=CLI.INPUT,
+            selection=None,
+            confirm=CLI.confirm,
+            overwrite=CLI.force_overwrite,
+            single_res=CLI.single_res
+        )
+    except KeyboardInterrupt as ke:
+        print(ke.args[0])
+    except Exception as e:
+        print(str(e))
+    finally:
+        input("\npress Enter to close.......\n")
+        sys.exit()
