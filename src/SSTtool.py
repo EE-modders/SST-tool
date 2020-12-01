@@ -34,7 +34,10 @@ print("###")
 print("###----------------------------------------------\n")
 
 
-def _convert_files(files: list, confirm: bool, force_overwrite: bool, single_res: bool):
+def _convert_files(files: list, confirm: bool, force_overwrite: bool, single_res: bool, outputlocation=""):
+    # add os.sep when outputlocation is set
+    if outputlocation: outputlocation += os.sep
+
     for i, file in enumerate(files):
         # check for file existence and compression
         try:
@@ -96,12 +99,12 @@ def _convert_files(files: list, confirm: bool, force_overwrite: bool, single_res
                 for i in range(num_images):
                     if num_images > 1:
                         if SST.header["tiles"] > 1:                
-                            Image.write_file(Imageparts[i], f"{newfilename}_{i+1}-{num_images}")
+                            Image.write_file(Imageparts[i], outputlocation + f"{newfilename}_{i+1}-{num_images}")
                         elif SST.header["resolutions"] > 1:
-                            Image.write_file(Imageparts[i], f"{newfilename}_{i+1}-{num_images}_RES")
+                            Image.write_file(Imageparts[i], outputlocation + f"{newfilename}_{i+1}-{num_images}_RES")
                             if single_res: break
                     else:
-                        Image.write_file(Imageparts[i], newfilename)
+                        Image.write_file(Imageparts[i], outputlocation + newfilename)
 
         elif file.endswith(".tga"):
             print("found TGA file - will convert to SST.....\n")
@@ -147,9 +150,9 @@ def _convert_files(files: list, confirm: bool, force_overwrite: bool, single_res
                 newfilename = file.split('.')[0]
                 if os.path.exists(newfilename + '.sst') and not force_overwrite:
                     print("This file does already exist! - adding \"_NEW\"")
-                    newSST.write_to_file(newfilename + "_NEW", add_extention=True)
+                    newSST.write_to_file(outputlocation + newfilename + "_NEW", add_extention=True)
                 else:
-                    newSST.write_to_file(newfilename, add_extention=True)
+                    newSST.write_to_file(outputlocation + newfilename, add_extention=True)
 
                 # break out of the main loop
                 break
@@ -167,9 +170,9 @@ def _convert_files(files: list, confirm: bool, force_overwrite: bool, single_res
                 newfilename = file.split('.')[0]
                 if os.path.exists(newfilename + '.sst') and not force_overwrite:
                     print("This file does already exist! - adding \"_NEW\"")
-                    newSST.write_to_file(newfilename + "_NEW", add_extention=True)
+                    newSST.write_to_file(outputlocation + newfilename + "_NEW", add_extention=True)
                 else:
-                    newSST.write_to_file(newfilename, add_extention=True)
+                    newSST.write_to_file(outputlocation + newfilename, add_extention=True)
         else:
             raise TypeError("ERROR: unknown file format! Only TGA and SST are supported \n")
         
