@@ -228,6 +228,7 @@ def cli_params():
 if __name__ == "__main__":
     # in need to do this because fucking Windows users think that the software "does not work" otherwise......
     if len(sys.argv) <= 1:
+        print("Please use Drag&Drop or the commandline interface!")
         input("\npress Enter to close.......\n")
         sys.exit()
 
