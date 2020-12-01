@@ -41,7 +41,7 @@ def show_info():
     print("###")
     print("###----------------------------------------------\n")
 
-def _convert_files(files: list, confirm: bool, force_overwrite: bool, single_res: bool, outputlocation=""):
+def _convert_files(files: list, confirm: bool, force_overwrite: bool, single_res: bool, outputlocation: str):
     # add os.sep when outputlocation is set
     if outputlocation: outputlocation += os.sep
 
@@ -186,12 +186,12 @@ def _convert_files(files: list, confirm: bool, force_overwrite: bool, single_res
     print("done!")
 
 
-def main(inputfiles: list, selection: str, confirm=False, overwrite=False, single_res=False):
+def main(inputfiles: list, selection: str, confirm=False, overwrite=False, single_res=False, outputlocation=""):
 
     firstfile = inputfiles[0]
 
     if os.path.isfile(firstfile):
-        _convert_files(inputfiles, confirm=confirm, force_overwrite=overwrite, single_res=single_res)
+        _convert_files(inputfiles, confirm=confirm, force_overwrite=overwrite, single_res=single_res, outputlocation=outputlocation)
     elif os.path.isdir(firstfile):
         filepath = firstfile
         if not filepath.endswith(os.sep): filepath += os.sep
@@ -217,7 +217,7 @@ def main(inputfiles: list, selection: str, confirm=False, overwrite=False, singl
                 print("found file:", f)
                 filelist.append(filepath + f)
 
-        _convert_files(filelist, confirm=confirm, force_overwrite=overwrite, single_res=single_res)
+        _convert_files(filelist, confirm=confirm, force_overwrite=overwrite, single_res=single_res, outputlocation=outputlocation)
     else:
         raise TypeError("ERROR: Input is neither file nor folder!")
 
