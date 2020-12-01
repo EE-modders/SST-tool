@@ -42,9 +42,6 @@ def show_info():
     print("###----------------------------------------------\n")
 
 def _convert_files(files: list, confirm: bool, force_overwrite: bool, single_res: bool, outputlocation: str):
-    # add os.sep when outputlocation is set
-    if outputlocation: outputlocation += os.sep
-
     for i, file in enumerate(files):
         # check for file existence and compression
         try:
@@ -55,17 +52,28 @@ def _convert_files(files: list, confirm: bool, force_overwrite: bool, single_res
         except EnvironmentError:
             raise FileNotFoundError("File \"%s\" not found!" % file)
 
+        filename = os.path.basename(file)
+        filename_wo_ext = filename.split('.')[0]
+        file_abs_path = os.path.abspath(file)
+        dir_abs_path = os.path.dirname(file_abs_path)
+        _, file_ext = os.path.splitext(file_abs_path)
+
+        if not outputlocation: outputlocation = dir_abs_path
+
         # check if file is in ignorelist
-        if file in file_ignorelist:
+        if filename in file_ignorelist:
             print("This file is on the ignorelist! Skipping...")
             continue
 
+        newfilename = os.path.join(outputlocation, filename_wo_ext)
+        print(newfilename)
+
         # check if input file is SST or TGA
-        if file.endswith(".sst"):
+        if file_ext == ".sst":
             print("found SST file - extracting image(s).....")
 
             SST = SSTi()
-            SST.read_from_file(file)
+            SST.read_from_file(file_abs_path)
 
             tiles_mult = SST.header["resolutions"] * SST.header["tiles"]
 
@@ -73,12 +81,6 @@ def _convert_files(files: list, confirm: bool, force_overwrite: bool, single_res
                 Image = SST.unpack()
             except TypeError as e:
                 raise
-
-            if file.startswith('..'):
-                newfilename = '..' + file.split('.')[-2]
-            else:
-                newfilename = file.split('.')[-2]
-            print(newfilename)
 
             if tiles_mult < 1:
                 raise TypeError("there is something wrong with your file! | Error code: res %s; tiles %s" % (SST.header["resolutions"], SST.header["tiles"]))
@@ -106,14 +108,14 @@ def _convert_files(files: list, confirm: bool, force_overwrite: bool, single_res
                 for i in range(num_images):
                     if num_images > 1:
                         if SST.header["tiles"] > 1:                
-                            Image.write_file(Imageparts[i], outputlocation + f"{newfilename}_{i+1}-{num_images}")
+                            Image.write_file(Imageparts[i], f"{newfilename}_{i+1}-{num_images}")
                         elif SST.header["resolutions"] > 1:
-                            Image.write_file(Imageparts[i], outputlocation + f"{newfilename}_{i+1}-{num_images}_RES")
+                            Image.write_file(Imageparts[i], f"{newfilename}_{i+1}-{num_images}_RES")
                             if single_res: break
                     else:
-                        Image.write_file(Imageparts[i], outputlocation + newfilename)
+                        Image.write_file(Imageparts[i], newfilename)
 
-        elif file.endswith(".tga"):
+        elif file_ext == ".tga":
             print("found TGA file - will convert to SST.....\n")
 
             # check if this item is the first of the input list
@@ -154,12 +156,11 @@ def _convert_files(files: list, confirm: bool, force_overwrite: bool, single_res
                 orgTGA = TGA(tga_binary=tga_bin)
                 newSST = SSTi(1, num_tiles=len(files), x_res=orgTGA.xRes, y_res=orgTGA.yRes, ImageBody=orgTGA.tga_bin)
 
-                newfilename = file.split('.')[0]
                 if os.path.exists(newfilename + '.sst') and not force_overwrite:
                     print("This file does already exist! - adding \"_NEW\"")
-                    newSST.write_to_file(outputlocation + newfilename + "_NEW", add_extention=True)
+                    newSST.write_to_file(newfilename + "_NEW", add_extention=True)
                 else:
-                    newSST.write_to_file(outputlocation + newfilename, add_extention=True)
+                    newSST.write_to_file(newfilename, add_extention=True)
 
                 # break out of the main loop
                 break
@@ -167,19 +168,18 @@ def _convert_files(files: list, confirm: bool, force_overwrite: bool, single_res
                 # convert just this one file
                 print("creating SST........")
 
-                with open(file, 'rb') as tgafile:
+                with open(file_abs_path, 'rb') as tgafile:
                     tga_bin = tgafile.read()
 
                 orgTGA = TGA(tga_binary=tga_bin)
                 orgTGA.cleanup()
                 newSST = SSTi(1, num_tiles=1, x_res=orgTGA.xRes, y_res=orgTGA.yRes, ImageBody=orgTGA.tga_bin)
                 
-                newfilename = file.split('.')[0]
                 if os.path.exists(newfilename + '.sst') and not force_overwrite:
                     print("This file does already exist! - adding \"_NEW\"")
-                    newSST.write_to_file(outputlocation + newfilename + "_NEW", add_extention=True)
+                    newSST.write_to_file(newfilename + "_NEW", add_extention=True)
                 else:
-                    newSST.write_to_file(outputlocation + newfilename, add_extention=True)
+                    newSST.write_to_file(newfilename, add_extention=True)
         else:
             raise TypeError("ERROR: unknown file format! Only TGA and SST are supported \n")
         
