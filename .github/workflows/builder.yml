@@ -40,38 +40,39 @@ jobs:
         path: .\dist\SSTtool.exe
 
 
-  Linux:
-
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v1
-    - name: Set up Python 3.7
-      uses: actions/setup-python@v1
-      with:
-        python-version: 3.7
-    - name: Setup env
-      run: |
-        python -m pip install --upgrade pip
-        pip install Pillow
-        pip install stickytape
-        mkdir ./dist
-    - name: python version
-      run: python --version
-    - name: stickytape version
-      run: stickytape --help          
-    
-    - name: run SSTtool directly
-      run: python ./src/SSTtool.py -v
-    
-    - name: pack SSTtool into single script file      
-      run: stickytape ./src/SSTtool.py --copy-shebang --output-file ./dist/SSTtool.py
-      
-    - name: run packed version
-      run: python3 ./dist/SSTtool.py -v
-
-    - name: save package
-      uses: actions/upload-artifact@master
-      with:
-        name: SSTtool_linux
-        path: ./dist/SSTtool.py
+#  Linux:
+#
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#    - uses: actions/checkout@v1
+#    - name: Set up Python 3.7
+#      uses: actions/setup-python@v1
+#      with:
+#        python-version: 3.7
+#    - name: Setup env
+#      run: |
+#        python -m pip install --upgrade pip
+#        pip install Pillow
+#        pip install stickytape
+#        mkdir ./dist
+#    - name: python version
+#      run: python --version
+#    - name: stickytape version
+#      run: stickytape --help          
+#    
+#    - name: run SSTtool directly
+#      run: python ./src/SSTtool.py -v
+#    
+#    - name: pack SSTtool into single script file      
+#      run: stickytape ./src/SSTtool.py --copy-shebang --output-file ./dist/SSTtool.py
+#      
+#    - name: run packed version
+#      run: python3 ./dist/SSTtool.py -v
+#
+#    - name: save package
+#      uses: actions/upload-artifact@master
+#      with:
+#        name: SSTtool_linux
+#        path: ./dist/SSTtool.py
+#
