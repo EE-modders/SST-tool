@@ -188,7 +188,7 @@ def _convert_files(files: list, confirm: bool, force_overwrite: bool, single_res
 
 def main(inputfiles: list, selection: str, confirm=False, overwrite=False, single_res=False, outputlocation=""):
 
-    firstfile = inputfiles[0]
+    firstfile: str = inputfiles[0]
 
     if os.path.isfile(firstfile):
         _convert_files(inputfiles, confirm=confirm, force_overwrite=overwrite, single_res=single_res, outputlocation=outputlocation)
