@@ -145,7 +145,7 @@ def _convert_files(files: list, confirm: bool, force_overwrite: bool, single_res
                 newSST = SSTi(1, num_tiles=len(files), x_res=orgTGA.xRes, y_res=orgTGA.yRes, ImageBody=orgTGA.tga_bin)
 
                 newfilename = file.split('.')[0]
-                if os.path.exists(newfilename + '.ssz') and not force_overwrite:
+                if os.path.exists(newfilename + '.sst') and not force_overwrite:
                     print("This file does already exist! - adding \"_NEW\"")
                     newSST.write_to_file(newfilename + "_NEW", add_extention=True)
                 else:
