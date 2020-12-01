@@ -12,4 +12,5 @@ class ImgInterface():
         raise NotImplementedError
     
     def write_file(self, binary, filename: str) -> None:
+        """writes file AND ADDS FILE EXTENTION AUTOMATICALLY!!"""
         raise NotImplementedError
