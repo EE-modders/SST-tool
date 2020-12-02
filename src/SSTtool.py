@@ -191,7 +191,7 @@ def main(inputfiles: list, selection: str, confirm=False, overwrite=False, singl
     firstfile: str = inputfiles[0]
 
     if os.path.isfile(firstfile):
-        _convert_files(inputfiles, confirm=confirm, force_overwrite=overwrite, single_res=single_res, outputlocation=outputlocation)
+        _convert_files(inputfiles, confirm=confirm, force_overwrite=overwrite, single_res=single_res, bundling=bundling, outputlocation=outputlocation)
     elif os.path.isdir(firstfile):
         filepath = firstfile
         if not filepath.endswith(os.sep): filepath += os.sep
@@ -217,7 +217,7 @@ def main(inputfiles: list, selection: str, confirm=False, overwrite=False, singl
                 print("found file:", f)
                 filelist.append(filepath + f)
 
-        _convert_files(filelist, confirm=confirm, force_overwrite=overwrite, single_res=single_res, outputlocation=outputlocation)
+        _convert_files(filelist, confirm=confirm, force_overwrite=overwrite, single_res=single_res, bundling=bundling, outputlocation=outputlocation)
     else:
         raise TypeError("ERROR: Input is neither file nor folder!")
 
