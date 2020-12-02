@@ -41,7 +41,7 @@ def show_info():
     print("###")
     print("###----------------------------------------------\n")
 
-def _convert_files(files: list, confirm: bool, force_overwrite: bool, single_res: bool, outputlocation: str):
+def _convert_files(files: list, confirm: bool, force_overwrite: bool, single_res: bool, bundling: bool, outputlocation: str):
     for i, file in enumerate(files):
         # check for file existence and compression
         try:
@@ -119,7 +119,7 @@ def _convert_files(files: list, confirm: bool, force_overwrite: bool, single_res
             print("found TGA file - will convert to SST.....\n")
 
             # check if this item is the first of the input list
-            if i == 0 and len(files) > 1:
+            if i == 0 and len(files) > 1 and bundling:
                 # convert all images into one SST with multiple tiles
                 tga_bin = b''
                 x_tmp, y_tmp = 0, 0
@@ -186,7 +186,7 @@ def _convert_files(files: list, confirm: bool, force_overwrite: bool, single_res
     print("done!")
 
 
-def main(inputfiles: list, selection: str, confirm=False, overwrite=False, single_res=False, outputlocation=""):
+def main(inputfiles: list, selection: str, confirm=False, overwrite=False, single_res=False, bundling=True, outputlocation=""):
 
     firstfile: str = inputfiles[0]
 
@@ -228,6 +228,7 @@ def cli_params():
     parser.add_argument("INPUT", nargs='+', help="input file(s) or folder")
 
     parser.add_argument("-nc", dest="confirm", action="store_false", help="disable all confirm messages")
+    parser.add_argument("-nb", dest="bundling", action="store_false", help="disable bundling of TGA images")
     parser.add_argument("-s", "--single", dest="single_res", action="store_true", help="export only one (the biggest) resolution")
     parser.add_argument("-f", "--force", dest="force_overwrite", action="store_true", help="forces to overwrite existing files without asking")
     parser.add_argument("-v", "--version", action="version", version=version)
@@ -255,7 +256,8 @@ if __name__ == "__main__":
             selection=None,
             confirm=CLI.confirm,
             overwrite=CLI.force_overwrite,
-            single_res=CLI.single_res
+            single_res=CLI.single_res,
+            bundling=CLI.bundling
         )
     except KeyboardInterrupt as ke:
         print(ke.args[0])
