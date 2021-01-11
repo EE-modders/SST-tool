@@ -19,8 +19,7 @@ class TGA(ImgInterface):
         self.xRes, self.yRes, self.BitDepth, self.Type = self.get_TGA_info(self.TGAheader)
 
         if self.Type != 2:
-            input("ERROR: This type (%d) of TGA is not supported! (RLE compression could be a reason for this problem)\n" % self.Type)
-            sys.exit()
+            raise TypeError(f"ERROR: This type ({self.Type}) of TGA is not supported! \n(RLE compression could be a reason for this problem)")
 
     def get_header(self):
         tga = BytesIO(self.tga_bin)    
