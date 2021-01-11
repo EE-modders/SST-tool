@@ -48,7 +48,7 @@ def _convert_files(files: list, confirm: bool, force_overwrite: bool, single_res
             with open(file, 'rb') as sstfile:
                 print("analysing %s......" % file)
                 if sstfile.read(4) == magic_number_compressed:
-                    raise RuntimeError("\nyou need to decompress the file first!\n")
+                    raise TypeError("\nyou need to decompress the file first!\n")
         except EnvironmentError:
             raise FileNotFoundError("File \"%s\" not found!" % file)
 
