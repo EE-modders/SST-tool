@@ -62,3 +62,7 @@ A SST-file can contain multiple images tiles and / or resolutions, which get los
 Furthermore EE Studio was not able to convert images bigger than the original file, which made creating new high(er) resolution textures nearly impossible.
 
 **SSTtool** solves both problems and allows all tiles and resolutions of a SST-texture to be extracted.
+
+## Known issues
+
+- on Windows folder convert does not work, when the file path contains a dot `.` (thanks to @Fortuking for reporting)
