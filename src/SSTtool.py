@@ -246,7 +246,7 @@ if __name__ == "__main__":
 
     CLI = cli_params()
 
-    print(CLI)
+    #print(CLI)
 
     fromCLI = True
 
