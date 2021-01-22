@@ -52,7 +52,7 @@ def _convert_files(files: list, confirm: bool, force_overwrite: bool, single_res
         except EnvironmentError:
             raise FileNotFoundError("File \"%s\" not found!" % file)
 
-        filename = os.path.basename(file)
+        filename = os.path.basename(file) # (!!!) this fucking shit does not work properly on Windows for some fucking reason - WONTFIX
         filename_wo_ext = filename.split('.')[0]
         file_abs_path = os.path.abspath(file)
         dir_abs_path = os.path.dirname(file_abs_path)
