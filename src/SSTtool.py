@@ -227,6 +227,7 @@ def cli_params():
 
     parser.add_argument("INPUT", nargs='+', help="input file(s) or folder")
 
+    parser.add_argument("-o", "--output", dest="output", default="", help="output folder")
     parser.add_argument("-nc", dest="confirm", action="store_false", help="disable all confirm messages")
     parser.add_argument("-nb", dest="bundling", action="store_false", help="disable bundling of TGA images")
     parser.add_argument("-s", "--single", dest="single_res", action="store_true", help="export only one (the biggest) resolution")
@@ -246,13 +247,12 @@ if __name__ == "__main__":
 
     CLI = cli_params()
 
-    #print(CLI)
-
     fromCLI = True
 
     try:
         main(
             inputfiles=CLI.INPUT,
+            outputlocation=CLI.output,
             selection=None,
             confirm=CLI.confirm,
             overwrite=CLI.force_overwrite,
